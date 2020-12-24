@@ -1,0 +1,10 @@
+{
+  "name": "necromunda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "supertest": "^6.0.1",
+    "typescript": "^4.1.3"
+  }
+}

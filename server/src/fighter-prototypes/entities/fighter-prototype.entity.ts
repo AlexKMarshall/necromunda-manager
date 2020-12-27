@@ -16,6 +16,9 @@ export class FighterPrototype {
   @Column()
   name: string;
 
+  @Column()
+  cost: number;
+
   @OneToOne(() => Faction)
   @JoinColumn()
   faction: Faction;

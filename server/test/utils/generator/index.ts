@@ -23,6 +23,7 @@ export function buildCreateFighterPrototypeDTO(
 ): CreateFighterPrototypeDto {
   return {
     name: faker.company.bsBuzz(),
+    cost: faker.random.number(100),
     fighterClass: buildCreateFighterClassDTO(),
     faction: buildCreateFactionDTO(),
     ...overrides,

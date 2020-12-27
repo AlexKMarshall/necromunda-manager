@@ -3,6 +3,7 @@ import { CreateFighterClassDto } from '../../fighter-classes/dto/create-fighter-
 
 export class CreateFighterPrototypeDto {
   name: string;
+  cost: number;
   fighterClass: CreateFighterClassDto;
   faction: CreateFactionDto;
 }

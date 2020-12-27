@@ -6,7 +6,7 @@ import * as supertest from 'supertest';
 import { FactionsModule } from './factions.module';
 import { Faction } from './entities/faction.entity';
 
-describe('AppController (e2e)', () => {
+describe('Factions (e2e)', () => {
   let app: INestApplication;
 
   let databaseName: string;
@@ -66,10 +66,10 @@ describe('AppController (e2e)', () => {
     expect(updateResponse.status).toBe(200);
     expect(updateResponse.body).toEqual({ id: factionId, ...updatedFaction });
 
-    const updatedReadResponse = await request.get(endpoint);
+    const updatedReadResponse = await request.get(`${endpoint}/${factionId}`);
 
     expect(updatedReadResponse.status).toBe(200);
-    expect(updatedReadResponse.body).toContainEqual(
+    expect(updatedReadResponse.body).toEqual(
       expect.objectContaining(updatedFaction),
     );
 

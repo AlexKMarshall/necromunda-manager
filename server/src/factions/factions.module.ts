@@ -8,5 +8,6 @@ import { Faction } from './entities/faction.entity';
   imports: [TypeOrmModule.forFeature([Faction])],
   controllers: [FactionsController],
   providers: [FactionsService],
+  exports: [FactionsService],
 })
 export class FactionsModule {}

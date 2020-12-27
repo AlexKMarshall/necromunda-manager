@@ -4,24 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { createDatabase, dropDatabase } from 'pg-god';
 import * as supertest from 'supertest';
 import { FighterClassesModule } from './fighter-classes.module';
-import { Faction } from '../factions/entities/faction.entity';
 import { FighterClass } from './entities/fighter-class.entity';
-import { FactionsService } from '../factions/factions.service';
-import * as faker from 'faker';
-import { CreateFighterClassDto } from './dto/create-fighter-class.dto';
-
-function buildCreateFighterClassDTO(
-  overrides: Partial<CreateFighterClassDto> = {},
-) {
-  return { name: faker.company.bsNoun(), ...overrides };
-}
+import { buildCreateFighterClassDTO } from '../../test/utils/generator';
 
 describe('Fighter Classes (e2e)', () => {
   let app: INestApplication;
   let databaseName: string;
   let request: supertest.SuperTest<supertest.Test>;
-  let factionsService: FactionsService;
-  let faction: Faction;
 
   beforeAll(async () => {
     databaseName = `necromunda-${process.env.JEST_WORKER_ID}`;
@@ -48,7 +37,7 @@ describe('Fighter Classes (e2e)', () => {
     request = await supertest(app.getHttpServer());
   });
 
-  it('should allow CRUD of factions', async () => {
+  it('should allow CRUD of fighter classes', async () => {
     const endpoint = '/fighter-classes';
     const fighterClass = buildCreateFighterClassDTO();
 
@@ -82,10 +71,12 @@ describe('Fighter Classes (e2e)', () => {
       ...updatedFighterClass,
     });
 
-    const updatedReadResponse = await request.get(endpoint);
+    const updatedReadResponse = await request.get(
+      `${endpoint}/${fighterClassId}`,
+    );
 
     expect(updatedReadResponse.status).toBe(200);
-    expect(updatedReadResponse.body).toContainEqual(
+    expect(updatedReadResponse.body).toEqual(
       expect.objectContaining(updatedFighterClass),
     );
 

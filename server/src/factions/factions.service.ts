@@ -26,12 +26,20 @@ export class FactionsService {
     id: string,
     updateFactionDto: UpdateFactionDto,
   ): Promise<Faction> {
-    const faction = await this.factionsRepository.findOne(id);
-    return this.factionsRepository.save({ ...faction, ...updateFactionDto });
+    try {
+      const faction = await this.factionsRepository.findOne(id);
+      return this.factionsRepository.save({ ...faction, ...updateFactionDto });
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
   }
 
   async remove(id: string): Promise<Faction> {
-    const faction = await this.factionsRepository.findOne(id);
-    return this.factionsRepository.remove(faction);
+    try {
+      const faction = await this.factionsRepository.findOne(id);
+      return this.factionsRepository.remove(faction);
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
   }
 }

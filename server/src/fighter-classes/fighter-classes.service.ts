@@ -24,15 +24,23 @@ export class FighterClassesService {
   }
 
   async update(id: string, updateFighterClassDto: UpdateFighterClassDto) {
-    const fighterClass = await this.fighterClassesRepository.findOne(id);
-    return this.fighterClassesRepository.save({
-      ...fighterClass,
-      ...updateFighterClassDto,
-    });
+    try {
+      const fighterClass = await this.fighterClassesRepository.findOne(id);
+      return this.fighterClassesRepository.save({
+        ...fighterClass,
+        ...updateFighterClassDto,
+      });
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
   }
 
   async remove(id: string) {
-    const fighterClass = await this.fighterClassesRepository.findOne(id);
-    return this.fighterClassesRepository.remove(fighterClass);
+    try {
+      const fighterClass = await this.fighterClassesRepository.findOne(id);
+      return this.fighterClassesRepository.remove(fighterClass);
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
   }
 }

@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { AppController } from './app.controller';
+import { GangsModule } from './gangs/gangs.module';
+import { Gang } from './gangs/entities/gang.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { AppController } from './app.controller';
           type: 'postgres',
           host: configService.get('POSTGRES_HOST'),
           database: configService.get('POSTGRES_DATABASE'),
-          entities: [Faction, FighterClass, FighterPrototype, User],
+          entities: [Faction, FighterClass, FighterPrototype, User, Gang],
           synchronize: true,
         };
       },
@@ -34,6 +36,7 @@ import { AppController } from './app.controller';
     AuthModule,
     UsersModule,
     ConfigModule,
+    GangsModule,
   ],
   controllers: [AppController],
   providers: [],

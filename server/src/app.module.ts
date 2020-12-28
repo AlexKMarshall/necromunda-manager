@@ -7,18 +7,23 @@ import { FighterPrototypesModule } from './fighter-prototypes/fighter-prototypes
 import { FighterClassesModule } from './fighter-classes/fighter-classes.module';
 import { FighterClass } from './fighter-classes/entities/fighter-class.entity';
 import { FighterPrototype } from './fighter-prototypes/entities/fighter-prototype.entity';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
     FactionsModule,
+    ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         return {
           type: 'postgres',
           host: configService.get('POSTGRES_HOST'),
           database: configService.get('POSTGRES_DATABASE'),
-          entities: [Faction, FighterClass, FighterPrototype],
+          entities: [Faction, FighterClass, FighterPrototype, User],
           synchronize: true,
         };
       },
@@ -26,8 +31,11 @@ import { FighterPrototype } from './fighter-prototypes/entities/fighter-prototyp
     }),
     FighterPrototypesModule,
     FighterClassesModule,
+    AuthModule,
+    UsersModule,
+    ConfigModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}

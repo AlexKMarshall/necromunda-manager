@@ -1,3 +1,4 @@
+import { useForm } from "react-hook-form";
 import { useCreateFaction, useReadFactions } from "../hooks/factions";
 
 export default function Factions() {
@@ -22,23 +23,28 @@ export default function Factions() {
   );
 }
 
+interface FactionFormData {
+  name: string;
+}
+
 function CreateFaction() {
   const { isLoading, postFaction } = useCreateFaction();
+  const { register, handleSubmit, reset } = useForm<FactionFormData>();
 
-  const handleSubmit: React.FormEventHandler = async (e) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-    };
-    const name = target.name.value;
-    postFaction({ name });
-    target.name.value = "";
+  const onSubmit = async (formData: FactionFormData) => {
+    await postFaction(formData);
+    reset();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <label htmlFor="faction-name">Faction Name</label>
-      <input type="text" id="faction-name" name="name" />
+      <input
+        type="text"
+        id="faction-name"
+        name="name"
+        ref={register({ required: true })}
+      />
       <button disabled={isLoading}>{isLoading ? "Saving..." : "Submit"}</button>
     </form>
   );

@@ -5,17 +5,29 @@ import { Gang } from './entities/gang.entity';
 import { CreateGangDto } from './dto/create-gang.dto';
 import { UpdateGangDto } from './dto/update-gang.dto';
 import { User } from 'src/users/entities/user.entity';
-import e from 'express';
+import { AccountsService } from 'src/accounts/accounts.service';
+import { ACCOUNT_NAMES } from 'src/accounts/accounts.constants';
+import { PostingsService } from 'src/postings/postings.service';
 
 @Injectable()
 export class GangsService {
   constructor(
     @InjectRepository(Gang) private gangsRepository: Repository<Gang>,
+    private accountsService: AccountsService,
+    private postingsService: PostingsService,
   ) {}
-  create(
+
+  async create(
     createGangDtoWithUser: CreateGangDto & { user: Omit<User, 'passwordHash'> },
   ) {
-    return this.gangsRepository.save(createGangDtoWithUser);
+    try {
+      const gang = await this.gangsRepository.save(createGangDtoWithUser);
+      await this.accountsService.createDefaultAccounts(gang.id);
+      await this.setInitialStash(gang.id);
+      return gang;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   findByUserId(userId: string) {
@@ -62,4 +74,22 @@ export class GangsService {
       return Promise.reject(error);
     }
   }
+
+  async setInitialStash(gangId: string) {
+    const [stash] = await this.accountsService.findByName(
+      gangId,
+      ACCOUNT_NAMES.STASH,
+    );
+    const [initialEquity] = await this.accountsService.findByName(
+      gangId,
+      ACCOUNT_NAMES.INITIAL_EQUITY,
+    );
+    await this.postingsService.createDoubleEntry(
+      stash,
+      initialEquity,
+      INITIAL_STASH_VALUE,
+    );
+  }
 }
+
+const INITIAL_STASH_VALUE = 1000;

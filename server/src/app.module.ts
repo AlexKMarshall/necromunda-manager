@@ -13,6 +13,14 @@ import { User } from './users/entities/user.entity';
 import { AppController } from './app.controller';
 import { GangsModule } from './gangs/gangs.module';
 import { Gang } from './gangs/entities/gang.entity';
+import { AccountTypesModule } from './account-types/account-types.module';
+import { AccountType } from './account-types/entities/account-type.entity';
+import { AccountsModule } from './accounts/accounts.module';
+import { Account } from './accounts/entities/account.entity';
+import { FightersModule } from './fighters/fighters.module';
+import { Fighter } from './fighters/entities/fighter.entity';
+import { PostingsModule } from './postings/postings.module';
+import { Posting } from './postings/entities/posting.entity';
 
 @Module({
   imports: [
@@ -25,7 +33,17 @@ import { Gang } from './gangs/entities/gang.entity';
           type: 'postgres',
           host: configService.get('POSTGRES_HOST'),
           database: configService.get('POSTGRES_DATABASE'),
-          entities: [Faction, FighterClass, FighterPrototype, User, Gang],
+          entities: [
+            Faction,
+            FighterClass,
+            FighterPrototype,
+            User,
+            Gang,
+            AccountType,
+            Account,
+            Fighter,
+            Posting,
+          ],
           synchronize: true,
         };
       },
@@ -37,6 +55,10 @@ import { Gang } from './gangs/entities/gang.entity';
     UsersModule,
     ConfigModule,
     GangsModule,
+    AccountTypesModule,
+    AccountsModule,
+    FightersModule,
+    PostingsModule,
   ],
   controllers: [AppController],
   providers: [],

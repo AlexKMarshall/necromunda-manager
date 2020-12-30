@@ -1,3 +1,4 @@
+import { useForm } from "react-hook-form";
 import {
   useCreateFighterClass,
   useReadFighterClasses,
@@ -25,23 +26,28 @@ export default function FighterClasses() {
   );
 }
 
+interface FighterClassFormData {
+  name: string;
+}
+
 function CreateFighterClass() {
   const { isLoading, postFighterClass } = useCreateFighterClass();
+  const { register, handleSubmit, reset } = useForm<FighterClassFormData>();
 
-  const handleSubmit: React.FormEventHandler = async (e) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-    };
-    const name = target.name.value;
-    postFighterClass({ name });
-    target.name.value = "";
+  const onSubmit = async (formData: FighterClassFormData) => {
+    await postFighterClass(formData);
+    reset();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <label htmlFor="fighter-class-name">Fighter Class Name</label>
-      <input type="text" id="fighter-class-name" name="name" />
+      <input
+        type="text"
+        id="fighter-class-name"
+        name="name"
+        ref={register({ required: true })}
+      />
       <button disabled={isLoading}>{isLoading ? "Saving..." : "Submit"}</button>
     </form>
   );

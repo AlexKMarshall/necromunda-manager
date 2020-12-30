@@ -1,3 +1,4 @@
+import { useForm } from "react-hook-form";
 import { useReadFactions } from "../hooks/factions";
 import { useReadFighterClasses } from "../hooks/fighter-classes";
 import {
@@ -34,6 +35,13 @@ export default function FighterPrototypes() {
   );
 }
 
+interface FighterPrototypeFormData {
+  name: string;
+  cost: number;
+  factionId: string;
+  fighterClassId: string;
+}
+
 function CreateFighterPrototype() {
   const { isLoading, postFighterPrototype } = useCreateFighterPrototype();
   const {
@@ -41,36 +49,37 @@ function CreateFighterPrototype() {
     fighterClasses,
   } = useReadFighterClasses();
   const { isLoading: isFactionLoading, factions } = useReadFactions();
+  const { register, handleSubmit, reset } = useForm<FighterPrototypeFormData>();
 
-  const handleSubmit: React.FormEventHandler = async (e) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-      faction: { value: string };
-      "fighter-class": { value: string };
-      cost: { value: string };
-    };
-    const name = target.name.value;
-    const factionId = target.faction.value;
-    const fighterClassId = target["fighter-class"].value;
-    const cost = target.cost.value;
-    postFighterPrototype({
+  const onSubmit = async (formData: FighterPrototypeFormData) => {
+    const { name, cost, fighterClassId, factionId } = formData;
+    const createFighterPrototypeDTO = {
       name,
+      cost,
       fighterClass: { id: fighterClassId },
       faction: { id: factionId },
-      cost,
-    });
-    target.name.value = "";
+    };
+    await postFighterPrototype(createFighterPrototypeDTO);
+    reset();
   };
 
   if (isFighterClassLoading || isFactionLoading) return <div>Loading...</div>;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <label htmlFor="fighter-prototype-name">Fighter Class Name</label>
-      <input type="text" id="fighter-prototype-name" name="name" />
+      <input
+        type="text"
+        id="fighter-prototype-name"
+        name="name"
+        ref={register({ required: true })}
+      />
       <label htmlFor="fighter-class">Select Fighter class:</label>
-      <select name="fighter-class" id="fighter-class" required={true}>
+      <select
+        name="fighterClassId"
+        id="fighter-class"
+        ref={register({ required: true })}
+      >
         <option key="" value="" disabled={true}>
           Please select
         </option>
@@ -81,7 +90,7 @@ function CreateFighterPrototype() {
         ))}
       </select>
       <label htmlFor="faction">Select Fighter class:</label>
-      <select name="faction" id="faction" required={true}>
+      <select name="factionId" id="faction" ref={register({ required: true })}>
         <option key="" value="" disabled={true}>
           Please select
         </option>
@@ -92,7 +101,12 @@ function CreateFighterPrototype() {
         ))}
       </select>
       <label htmlFor="cost">Cost:</label>
-      <input type="number" id="cost" name="cost" />
+      <input
+        type="number"
+        id="cost"
+        name="cost"
+        ref={register({ required: true })}
+      />
       <button disabled={isLoading}>{isLoading ? "Saving..." : "Submit"}</button>
     </form>
   );

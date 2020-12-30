@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Faction } from '../../factions/entities/faction.entity';
 import { FighterClass } from '../../fighter-classes/entities/fighter-class.entity';
@@ -19,11 +20,11 @@ export class FighterPrototype {
   @Column()
   cost: number;
 
-  @OneToOne(() => Faction)
+  @ManyToOne(() => Faction)
   @JoinColumn()
   faction: Faction;
 
-  @OneToOne(() => FighterClass)
+  @ManyToOne(() => FighterClass)
   @JoinColumn()
   fighterClass: FighterClass;
 }

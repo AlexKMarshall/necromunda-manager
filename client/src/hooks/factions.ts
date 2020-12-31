@@ -34,7 +34,24 @@ export function useDeleteFaction() {
     client(`factions/${factionId}`, undefined, { method: "DELETE" });
 
   const mutationResult = useMutation(deleteFactionClient, {
-    onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.factions),
+    onMutate: async (factionId) => {
+      await queryClient.cancelQueries(QUERY_KEYS.factions);
+
+      const previousFactions = queryClient.getQueryData(QUERY_KEYS.factions);
+
+      queryClient.setQueryData(QUERY_KEYS.factions, (old) =>
+        (old as any[]).filter((f) => f.id !== factionId)
+      );
+
+      return { previousFactions };
+    },
+    onError: (err, factionId, context) => {
+      queryClient.setQueryData(
+        QUERY_KEYS.factions,
+        (context as any).previousFactions
+      );
+    },
+    onSettled: () => queryClient.invalidateQueries(QUERY_KEYS.factions),
   });
 
   const deleteFaction = mutationResult.mutate;

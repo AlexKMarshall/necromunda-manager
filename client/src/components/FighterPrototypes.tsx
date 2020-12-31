@@ -19,6 +19,7 @@ import { useReadFactions } from "../hooks/factions";
 import { useReadFighterClasses } from "../hooks/fighter-classes";
 import {
   useCreateFighterPrototype,
+  useDeleteFighterPrototype,
   useReadFighterPrototypes,
 } from "../hooks/fighter-prototypes";
 
@@ -46,17 +47,13 @@ export default function FighterPrototypes() {
                 <Th>Name</Th>
                 <Th>Class</Th>
                 <Th>Cost</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
 
             <Tbody>
-              {fighterPrototypes.map((fighterPrototype: any) => (
-                <Tr key={fighterPrototype.id}>
-                  <Td>{fighterPrototype.faction.name}</Td>
-                  <Td>{fighterPrototype.name}</Td>
-                  <Td>{fighterPrototype.fighterClass.name}</Td>
-                  <Td>{fighterPrototype.cost}</Td>
-                </Tr>
+              {fighterPrototypes.map((fp: any) => (
+                <FighterPrototypeRow fighterPrototype={fp} key={fp.id} />
               ))}
             </Tbody>
           </Table>
@@ -64,6 +61,29 @@ export default function FighterPrototypes() {
         <CreateFighterPrototype />
       </Stack>
     </Box>
+  );
+}
+
+function FighterPrototypeRow({ fighterPrototype }: { fighterPrototype: any }) {
+  const {
+    isLoading: isDeleteLoading,
+    deleteFighterPrototype,
+  } = useDeleteFighterPrototype();
+
+  const handleDelete = () => deleteFighterPrototype(fighterPrototype.id);
+
+  return (
+    <Tr>
+      <Td>{fighterPrototype.faction.name}</Td>
+      <Td>{fighterPrototype.name}</Td>
+      <Td>{fighterPrototype.fighterClass.name}</Td>
+      <Td>{fighterPrototype.cost}</Td>
+      <Td>
+        <Button type="button" onClick={handleDelete} disabled={isDeleteLoading}>
+          Delete
+        </Button>
+      </Td>
+    </Tr>
   );
 }
 

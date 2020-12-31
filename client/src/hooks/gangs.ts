@@ -25,3 +25,19 @@ export function useCreateGang() {
 
   return { ...mutationResult, postGang };
 }
+
+export function useDeleteGang() {
+  const client = useAuthClient();
+  const queryClient = useQueryClient();
+
+  const deleteGangClient = (gangId: string) =>
+    client(`gangs/${gangId}`, null, { method: "DELETE" });
+
+  const mutationResult = useMutation(deleteGangClient, {
+    onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.gangs),
+  });
+
+  const deleteGang = mutationResult.mutate;
+
+  return { ...mutationResult, deleteGang };
+}

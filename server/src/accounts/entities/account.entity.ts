@@ -10,7 +10,7 @@ export class Account {
   @Column()
   name: string;
 
-  @ManyToOne(() => Gang)
+  @ManyToOne(() => Gang, { onDelete: 'CASCADE' })
   gang: Gang;
 
   @Column()

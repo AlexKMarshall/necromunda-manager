@@ -17,7 +17,7 @@ import {
 import { Form, FormControl } from "./Form";
 
 import { useReadFactions } from "../hooks/factions";
-import { useCreateGang, useReadGangs } from "../hooks/gangs";
+import { useCreateGang, useDeleteGang, useReadGangs } from "../hooks/gangs";
 
 export default function Gangs() {
   const { isLoading, isError, error, gangs } = useReadGangs();
@@ -36,14 +36,12 @@ export default function Gangs() {
               <Tr>
                 <Th>Name</Th>
                 <Th>Faction</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {gangs.map((gang: any) => (
-                <Tr key={gang.id}>
-                  <Td>{gang.name}</Td>
-                  <Td>{gang.faction.name}</Td>
-                </Tr>
+                <GangRow gang={gang} key={gang.id} />
               ))}
             </Tbody>
           </Table>
@@ -51,6 +49,28 @@ export default function Gangs() {
         <CreateGang />
       </Stack>
     </Box>
+  );
+}
+
+function GangRow({ gang }: { gang: any }) {
+  const { isLoading: isDeleteLoading, deleteGang } = useDeleteGang();
+
+  const handleDelete = () => deleteGang(gang.id);
+
+  return (
+    <Tr>
+      <Td>{gang.name}</Td>
+      <Td>{gang.faction.name}</Td>
+      <Td>
+        <Button
+          type="button"
+          onClick={handleDelete}
+          isDisabled={isDeleteLoading}
+        >
+          Delete
+        </Button>
+      </Td>
+    </Tr>
   );
 }
 

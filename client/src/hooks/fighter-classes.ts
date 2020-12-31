@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { QUERY_KEYS } from "../constants/query-keys";
 import { useAuthClient } from "./client";
 
 export function useReadFighterClasses() {
@@ -26,4 +27,19 @@ export function useCreateFighterClass() {
   const postFighterClass = mutationResult.mutate;
 
   return { ...mutationResult, postFighterClass };
+}
+export function useDeleteFighterClass() {
+  const client = useAuthClient();
+  const queryClient = useQueryClient();
+
+  const deleteFighterClassClient = (fighterClassId: string) =>
+    client(`fighter-classes/${fighterClassId}`, null, { method: "DELETE" });
+
+  const mutationResult = useMutation(deleteFighterClassClient, {
+    onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.fighterClasses),
+  });
+
+  const deleteFighterClass = mutationResult.mutate;
+
+  return { ...mutationResult, deleteFighterClass };
 }

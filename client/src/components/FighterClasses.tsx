@@ -16,6 +16,7 @@ import {
 import { Form, FormControl } from "./Form";
 import {
   useCreateFighterClass,
+  useDeleteFighterClass,
   useReadFighterClasses,
 } from "../hooks/fighter-classes";
 
@@ -35,13 +36,15 @@ export default function FighterClasses() {
             <Thead>
               <Tr>
                 <Th>Fighter Class Name</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {fighterClasses.map((fighterClass: any) => (
-                <Tr key={fighterClass.id}>
-                  <Td>{fighterClass.name}</Td>
-                </Tr>
+                <FighterClassRow
+                  fighterClass={fighterClass}
+                  key={fighterClass.id}
+                />
               ))}
             </Tbody>
           </Table>
@@ -54,6 +57,25 @@ export default function FighterClasses() {
 
 interface FighterClassFormData {
   name: string;
+}
+
+function FighterClassRow({ fighterClass }: { fighterClass: any }) {
+  const {
+    isLoading: isDeleteLoading,
+    deleteFighterClass,
+  } = useDeleteFighterClass();
+
+  const handleDelete = () => deleteFighterClass(fighterClass.id);
+  return (
+    <Tr>
+      <Td>{fighterClass.name}</Td>
+      <Td>
+        <Button type="button" onClick={handleDelete} disabled={isDeleteLoading}>
+          Delete
+        </Button>
+      </Td>
+    </Tr>
+  );
 }
 
 function CreateFighterClass() {

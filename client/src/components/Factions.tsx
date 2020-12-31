@@ -14,7 +14,11 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { Form, FormControl } from "./Form";
-import { useCreateFaction, useReadFactions } from "../hooks/factions";
+import {
+  useCreateFaction,
+  useDeleteFaction,
+  useReadFactions,
+} from "../hooks/factions";
 
 export default function Factions() {
   const { isLoading, isError, error, factions } = useReadFactions();
@@ -32,13 +36,12 @@ export default function Factions() {
             <Thead>
               <Tr>
                 <Th>Faction Name</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
               {factions.map((faction: any) => (
-                <Tr key={faction.id}>
-                  <Td>{faction.name}</Td>
-                </Tr>
+                <FactionRow key={faction.id} faction={faction} />
               ))}
             </Tbody>
           </Table>
@@ -46,6 +49,23 @@ export default function Factions() {
       </Stack>
       <CreateFaction />
     </Box>
+  );
+}
+
+function FactionRow({ faction }: { faction: any }) {
+  const { isLoading: isDeleteLoading, deleteFaction } = useDeleteFaction();
+
+  const handleDelete = () => deleteFaction(faction.id);
+
+  return (
+    <Tr>
+      <Td>{faction.name}</Td>
+      <Td>
+        <Button type="button" onClick={handleDelete} disabled={isDeleteLoading}>
+          Delete
+        </Button>
+      </Td>
+    </Tr>
   );
 }
 

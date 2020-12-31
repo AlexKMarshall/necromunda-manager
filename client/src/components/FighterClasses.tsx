@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Table,
   Thead,
@@ -12,6 +13,8 @@ import {
   Input,
   Button,
   Stack,
+  Spinner,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { Form, FormControl } from "./Form";
 import {
@@ -19,6 +22,10 @@ import {
   useDeleteFighterClass,
   useReadFighterClasses,
 } from "../hooks/fighter-classes";
+import {
+  createFighterClassDtoSchema,
+  FighterClass,
+} from "../schemas/fighter-class.schema";
 
 export default function FighterClasses() {
   const { isLoading, isError, error, fighterClasses } = useReadFighterClasses();
@@ -28,7 +35,7 @@ export default function FighterClasses() {
       <Stack>
         <Heading>Fighter Classes</Heading>
         {isLoading ? (
-          <div>"Loading..."</div>
+          <Spinner />
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
@@ -40,7 +47,7 @@ export default function FighterClasses() {
               </Tr>
             </Thead>
             <Tbody>
-              {fighterClasses.map((fighterClass: any) => (
+              {fighterClasses.map((fighterClass) => (
                 <FighterClassRow
                   fighterClass={fighterClass}
                   key={fighterClass.id}
@@ -55,32 +62,52 @@ export default function FighterClasses() {
   );
 }
 
-interface FighterClassFormData {
-  name: string;
+interface FighterClassRowProps {
+  fighterClass: FighterClass;
 }
 
-function FighterClassRow({ fighterClass }: { fighterClass: any }) {
+function FighterClassRow({ fighterClass }: FighterClassRowProps) {
   const {
     isLoading: isDeleteLoading,
     deleteFighterClass,
   } = useDeleteFighterClass();
+  const isPendingSave = fighterClass.id.startsWith("TEMP");
 
   const handleDelete = () => deleteFighterClass(fighterClass.id);
   return (
     <Tr>
       <Td>{fighterClass.name}</Td>
       <Td>
-        <Button type="button" onClick={handleDelete} disabled={isDeleteLoading}>
-          Delete
-        </Button>
+        {isPendingSave ? (
+          <Spinner />
+        ) : (
+          <Button
+            type="button"
+            onClick={handleDelete}
+            disabled={isDeleteLoading}
+          >
+            Delete
+          </Button>
+        )}
       </Td>
     </Tr>
   );
 }
 
+interface FighterClassFormData {
+  name: string;
+}
+
 function CreateFighterClass() {
   const { isLoading, postFighterClass } = useCreateFighterClass();
-  const { register, handleSubmit, reset } = useForm<FighterClassFormData>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    errors,
+  } = useForm<FighterClassFormData>({
+    resolver: zodResolver(createFighterClassDtoSchema),
+  });
 
   const onSubmit = async (formData: FighterClassFormData) => {
     await postFighterClass(formData);
@@ -92,6 +119,7 @@ function CreateFighterClass() {
       <FormControl id="fighter-class-name" isRequired>
         <FormLabel>Fighter Class Name</FormLabel>
         <Input name="name" ref={register({ required: true })} />
+        <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
       </FormControl>
       <Button type="submit" disabled={isLoading}>
         {isLoading ? "Saving..." : "Submit"}

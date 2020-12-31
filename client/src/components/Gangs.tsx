@@ -13,11 +13,13 @@ import {
   Button,
   Select,
   Stack,
+  Spinner,
 } from "@chakra-ui/react";
 import { Form, FormControl } from "./Form";
 
 import { useReadFactions } from "../hooks/factions";
 import { useCreateGang, useDeleteGang, useReadGangs } from "../hooks/gangs";
+import { createGangDtoSchema } from "../schemas/gang.schema";
 
 export default function Gangs() {
   const { isLoading, isError, error, gangs } = useReadGangs();
@@ -27,7 +29,7 @@ export default function Gangs() {
       <Stack>
         <Heading>Gangs</Heading>
         {isLoading ? (
-          <div>"Loading..."</div>
+          <Spinner />
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
@@ -54,6 +56,7 @@ export default function Gangs() {
 
 function GangRow({ gang }: { gang: any }) {
   const { isLoading: isDeleteLoading, deleteGang } = useDeleteGang();
+  const isPendingSave = gang.id.startsWith("TEMP");
 
   const handleDelete = () => deleteGang(gang.id);
 
@@ -62,13 +65,17 @@ function GangRow({ gang }: { gang: any }) {
       <Td>{gang.name}</Td>
       <Td>{gang.faction.name}</Td>
       <Td>
-        <Button
-          type="button"
-          onClick={handleDelete}
-          isDisabled={isDeleteLoading}
-        >
-          Delete
-        </Button>
+        {isPendingSave ? (
+          <Spinner />
+        ) : (
+          <Button
+            type="button"
+            onClick={handleDelete}
+            isDisabled={isDeleteLoading}
+          >
+            Delete
+          </Button>
+        )}
       </Td>
     </Tr>
   );
@@ -84,13 +91,17 @@ function CreateGang() {
   const { isLoading: isFactionLoading, factions } = useReadFactions();
   const { register, handleSubmit, reset } = useForm<GangFormData>();
 
-  const onSubmit = async (formData: GangFormData) => {
-    const { name, factionId } = formData;
-    const createGangDTO = {
+  const convertFormToDto = ({ name, factionId }: GangFormData) => {
+    const maybeGang = {
       name,
-      faction: { id: factionId },
+      faction: factions.find((f) => f.id === factionId),
     };
-    await postGang(createGangDTO);
+    return createGangDtoSchema.parse(maybeGang);
+  };
+
+  const onSubmit = async (formData: GangFormData) => {
+    const createGangDto = convertFormToDto(formData);
+    await postGang(createGangDto);
     reset();
   };
 

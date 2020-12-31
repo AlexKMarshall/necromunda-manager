@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Table,
   Thead,
@@ -12,6 +13,8 @@ import {
   Input,
   Button,
   Stack,
+  Spinner,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { Form, FormControl } from "./Form";
 import {
@@ -19,6 +22,7 @@ import {
   useDeleteFaction,
   useReadFactions,
 } from "../hooks/factions";
+import { createFactionDtoSchema, Faction } from "../schemas/faction.schema";
 
 export default function Factions() {
   const { isLoading, isError, error, factions } = useReadFactions();
@@ -28,7 +32,7 @@ export default function Factions() {
       <Stack>
         <Heading>Factions</Heading>
         {isLoading ? (
-          <div>"Loading..."</div>
+          <Spinner />
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
@@ -40,9 +44,11 @@ export default function Factions() {
               </Tr>
             </Thead>
             <Tbody>
-              {factions.map((faction: any) => (
-                <FactionRow key={faction.id} faction={faction} />
-              ))}
+              {factions
+                ? factions.map((faction) => (
+                    <FactionRow key={faction.id} faction={faction} />
+                  ))
+                : null}
             </Tbody>
           </Table>
         )}
@@ -52,8 +58,9 @@ export default function Factions() {
   );
 }
 
-function FactionRow({ faction }: { faction: any }) {
+function FactionRow({ faction }: { faction: Faction }) {
   const { isLoading: isDeleteLoading, deleteFaction } = useDeleteFaction();
+  const isPendingSave = faction.id.startsWith("TEMP");
 
   const handleDelete = () => deleteFaction(faction.id);
 
@@ -61,9 +68,17 @@ function FactionRow({ faction }: { faction: any }) {
     <Tr>
       <Td>{faction.name}</Td>
       <Td>
-        <Button type="button" onClick={handleDelete} disabled={isDeleteLoading}>
-          Delete
-        </Button>
+        {isPendingSave ? (
+          <Spinner />
+        ) : (
+          <Button
+            type="button"
+            onClick={handleDelete}
+            disabled={isDeleteLoading}
+          >
+            Delete
+          </Button>
+        )}
       </Td>
     </Tr>
   );
@@ -75,7 +90,9 @@ interface FactionFormData {
 
 function CreateFaction() {
   const { isLoading, postFaction } = useCreateFaction();
-  const { register, handleSubmit, reset } = useForm<FactionFormData>();
+  const { register, handleSubmit, reset, errors } = useForm<FactionFormData>({
+    resolver: zodResolver(createFactionDtoSchema),
+  });
 
   const onSubmit = async (formData: FactionFormData) => {
     await postFaction(formData);
@@ -84,9 +101,14 @@ function CreateFaction() {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} heading="Create New Faction">
-      <FormControl id="faction-name" isRequired>
+      <FormControl
+        id="faction-name"
+        isRequired
+        isInvalid={Boolean(errors.name)}
+      >
         <FormLabel>Faction Name</FormLabel>
         <Input name="name" ref={register({ required: true })} />
+        <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
       </FormControl>
       <Button type="submit" disabled={isLoading}>
         {isLoading ? "Saving..." : "Submit"}

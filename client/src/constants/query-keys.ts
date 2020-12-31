@@ -1,6 +1,6 @@
 export const QUERY_KEYS = {
   factions: "factions",
   fighterClasses: "fighterClasses",
-  fighterPrototype: "fighterPrototypes",
+  fighterPrototypes: "fighterPrototypes",
   gangs: "gangs",
 };

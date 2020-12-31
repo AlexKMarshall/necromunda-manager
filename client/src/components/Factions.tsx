@@ -1,25 +1,51 @@
 import { useForm } from "react-hook-form";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Heading,
+  Box,
+  FormLabel,
+  Input,
+  Button,
+  Stack,
+} from "@chakra-ui/react";
+import { Form, FormControl } from "./Form";
 import { useCreateFaction, useReadFactions } from "../hooks/factions";
 
 export default function Factions() {
   const { isLoading, isError, error, factions } = useReadFactions();
 
   return (
-    <div>
-      <h2>Factions</h2>
+    <Box p={4}>
+      <Stack>
+        <Heading>Factions</Heading>
+        {isLoading ? (
+          <div>"Loading..."</div>
+        ) : isError ? (
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        ) : (
+          <Table variant="simple" size="sm">
+            <Thead>
+              <Tr>
+                <Th>Faction Name</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {factions.map((faction: any) => (
+                <Tr key={faction.id}>
+                  <Td>{faction.name}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+      </Stack>
       <CreateFaction />
-      {isLoading ? (
-        <div>"Loading..."</div>
-      ) : isError ? (
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      ) : (
-        <ul>
-          {factions.map((faction: any) => (
-            <li key={faction.id}>{faction.name}</li>
-          ))}
-        </ul>
-      )}
-    </div>
+    </Box>
   );
 }
 
@@ -37,15 +63,14 @@ function CreateFaction() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="faction-name">Faction Name</label>
-      <input
-        type="text"
-        id="faction-name"
-        name="name"
-        ref={register({ required: true })}
-      />
-      <button disabled={isLoading}>{isLoading ? "Saving..." : "Submit"}</button>
-    </form>
+    <Form onSubmit={handleSubmit(onSubmit)} heading="Create New Faction">
+      <FormControl id="faction-name" isRequired>
+        <FormLabel>Faction Name</FormLabel>
+        <Input name="name" ref={register({ required: true })} />
+      </FormControl>
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? "Saving..." : "Submit"}
+      </Button>
+    </Form>
   );
 }

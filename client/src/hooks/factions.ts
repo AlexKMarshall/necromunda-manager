@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { useClient } from "./client";
+import { useAuthClient } from "./client";
 
 export function useReadFactions() {
-  const client = useClient();
+  const client = useAuthClient();
   const queryResult = useQuery("factions", () => client("factions"));
 
   const factions = queryResult.data;
@@ -11,7 +11,7 @@ export function useReadFactions() {
 }
 
 export function useCreateFaction() {
-  const client = useClient();
+  const client = useAuthClient();
   const queryClient = useQueryClient();
 
   const createFaction = (faction: any) => client("factions", faction);

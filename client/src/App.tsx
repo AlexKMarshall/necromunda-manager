@@ -5,6 +5,7 @@ import FighterClasses from "./components/FighterClasses";
 import FighterPrototypes from "./components/FighterPrototypes";
 import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
+import Gangs from "./components/Gangs";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -21,6 +22,7 @@ function AuthenticatedApp() {
       <Factions />
       <FighterClasses />
       <FighterPrototypes />
+      <Gangs />
     </>
   );
 }

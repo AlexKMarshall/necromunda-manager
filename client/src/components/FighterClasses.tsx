@@ -1,5 +1,20 @@
 import { useForm } from "react-hook-form";
 import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Heading,
+  Box,
+  FormLabel,
+  Input,
+  Button,
+  Stack,
+} from "@chakra-ui/react";
+import { Form, FormControl } from "./Form";
+import {
   useCreateFighterClass,
   useReadFighterClasses,
 } from "../hooks/fighter-classes";
@@ -8,21 +23,32 @@ export default function FighterClasses() {
   const { isLoading, isError, error, fighterClasses } = useReadFighterClasses();
 
   return (
-    <div>
-      <h2>Fighter Classes</h2>
-      <CreateFighterClass />
-      {isLoading ? (
-        <div>"Loading..."</div>
-      ) : isError ? (
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      ) : (
-        <ul>
-          {fighterClasses.map((fighterClass: any) => (
-            <li key={fighterClass.id}>{fighterClass.name}</li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Box p={4}>
+      <Stack>
+        <Heading>Fighter Classes</Heading>
+        {isLoading ? (
+          <div>"Loading..."</div>
+        ) : isError ? (
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        ) : (
+          <Table variant="simple" size="sm">
+            <Thead>
+              <Tr>
+                <Th>Fighter Class Name</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {fighterClasses.map((fighterClass: any) => (
+                <Tr key={fighterClass.id}>
+                  <Td>{fighterClass.name}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+        <CreateFighterClass />
+      </Stack>
+    </Box>
   );
 }
 
@@ -40,15 +66,14 @@ function CreateFighterClass() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="fighter-class-name">Fighter Class Name</label>
-      <input
-        type="text"
-        id="fighter-class-name"
-        name="name"
-        ref={register({ required: true })}
-      />
-      <button disabled={isLoading}>{isLoading ? "Saving..." : "Submit"}</button>
-    </form>
+    <Form onSubmit={handleSubmit(onSubmit)} heading="Create New Fighter Class">
+      <FormControl id="fighter-class-name" isRequired>
+        <FormLabel>Fighter Class Name</FormLabel>
+        <Input name="name" ref={register({ required: true })} />
+      </FormControl>
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? "Saving..." : "Submit"}
+      </Button>
+    </Form>
   );
 }

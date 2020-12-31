@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { useClient } from "./client";
+import { useAuthClient } from "./client";
 
 export function useReadFighterClasses() {
-  const client = useClient();
+  const client = useAuthClient();
   const queryResult = useQuery("fighterClasses", () =>
     client("fighter-classes")
   );
@@ -13,7 +13,7 @@ export function useReadFighterClasses() {
 }
 
 export function useCreateFighterClass() {
-  const client = useClient();
+  const client = useAuthClient();
   const queryClient = useQueryClient();
 
   const createFighterClass = (fighterClass: any) =>

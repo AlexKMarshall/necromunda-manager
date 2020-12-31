@@ -1,6 +1,7 @@
 import { Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { PropsWithChildren } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 function AuthProvider({ children }: PropsWithChildren<{}>) {
   return (
@@ -25,7 +26,9 @@ function ReactQueryProvider({ children }: PropsWithChildren<{}>) {
 export default function AppProviders({ children }: PropsWithChildren<{}>) {
   return (
     <AuthProvider>
-      <ReactQueryProvider>{children}</ReactQueryProvider>
+      <ReactQueryProvider>
+        <ChakraProvider>{children}</ChakraProvider>
+      </ReactQueryProvider>
     </AuthProvider>
   );
 }

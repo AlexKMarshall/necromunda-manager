@@ -1,4 +1,20 @@
 import { useForm } from "react-hook-form";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Heading,
+  Box,
+  FormLabel,
+  Input,
+  Button,
+  Select,
+  Stack,
+} from "@chakra-ui/react";
+import { Form, FormControl } from "./Form";
 import { useReadFactions } from "../hooks/factions";
 import { useReadFighterClasses } from "../hooks/fighter-classes";
 import {
@@ -15,23 +31,39 @@ export default function FighterPrototypes() {
   } = useReadFighterPrototypes();
 
   return (
-    <div>
-      <h2>Fighter Prototypes</h2>
-      <CreateFighterPrototype />
-      {isLoading ? (
-        <div>"Loading..."</div>
-      ) : isError ? (
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      ) : (
-        <ul>
-          {fighterPrototypes.map((fighterPrototype: any) => (
-            <li key={fighterPrototype.id}>
-              {fighterPrototype.name} - {fighterPrototype.faction.name}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Box p={4}>
+      <Stack>
+        <Heading>Fighter Prototypes</Heading>
+        {isLoading ? (
+          <div>"Loading..."</div>
+        ) : isError ? (
+          <pre>{JSON.stringify(error, null, 2)}</pre>
+        ) : (
+          <Table variant="simple" size="sm">
+            <Thead>
+              <Tr>
+                <Th>Faction</Th>
+                <Th>Name</Th>
+                <Th>Class</Th>
+                <Th>Cost</Th>
+              </Tr>
+            </Thead>
+
+            <Tbody>
+              {fighterPrototypes.map((fighterPrototype: any) => (
+                <Tr key={fighterPrototype.id}>
+                  <Td>{fighterPrototype.faction.name}</Td>
+                  <Td>{fighterPrototype.name}</Td>
+                  <Td>{fighterPrototype.fighterClass.name}</Td>
+                  <Td>{fighterPrototype.cost}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
+        <CreateFighterPrototype />
+      </Stack>
+    </Box>
   );
 }
 
@@ -66,48 +98,49 @@ function CreateFighterPrototype() {
   if (isFighterClassLoading || isFactionLoading) return <div>Loading...</div>;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="fighter-prototype-name">Fighter Class Name</label>
-      <input
-        type="text"
-        id="fighter-prototype-name"
-        name="name"
-        ref={register({ required: true })}
-      />
-      <label htmlFor="fighter-class">Select Fighter class:</label>
-      <select
-        name="fighterClassId"
-        id="fighter-class"
-        ref={register({ required: true })}
-      >
-        <option key="" value="" disabled={true}>
-          Please select
-        </option>
-        {fighterClasses.map((fighterClass: any) => (
-          <option key={fighterClass.id} value={fighterClass.id}>
-            {fighterClass.name}
-          </option>
-        ))}
-      </select>
-      <label htmlFor="faction">Select Fighter class:</label>
-      <select name="factionId" id="faction" ref={register({ required: true })}>
-        <option key="" value="" disabled={true}>
-          Please select
-        </option>
-        {factions.map((faction: any) => (
-          <option key={faction.id} value={faction.id}>
-            {faction.name}
-          </option>
-        ))}
-      </select>
-      <label htmlFor="cost">Cost:</label>
-      <input
-        type="number"
-        id="cost"
-        name="cost"
-        ref={register({ required: true })}
-      />
-      <button disabled={isLoading}>{isLoading ? "Saving..." : "Submit"}</button>
-    </form>
+    <Form
+      onSubmit={handleSubmit(onSubmit)}
+      heading="Create New Fighter Prototype"
+    >
+      <FormControl id="fighter-prototype-name" isRequired>
+        <FormLabel>Fighter Class Name</FormLabel>
+        <Input name="name" ref={register({ required: true })} />
+      </FormControl>
+      <FormControl id="fighter-class" isRequired>
+        <FormLabel>Select Fighter class:</FormLabel>
+        <Select
+          name="fighterClassId"
+          ref={register({ required: true })}
+          placeholder="Select option"
+        >
+          {fighterClasses.map((fighterClass: any) => (
+            <option key={fighterClass.id} value={fighterClass.id}>
+              {fighterClass.name}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl id="faction" isRequired>
+        <FormLabel>Select Faction:</FormLabel>
+        <Select
+          name="factionId"
+          ref={register({ required: true })}
+          placeholder="Select option"
+        >
+          {factions.map((faction: any) => (
+            <option key={faction.id} value={faction.id}>
+              {faction.name}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl id="cost" isRequired>
+        <FormLabel>Cost:</FormLabel>
+        <Input type="number" name="cost" ref={register({ required: true })} />
+      </FormControl>
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? "Saving..." : "Submit"}
+      </Button>
+    </Form>
   );
 }

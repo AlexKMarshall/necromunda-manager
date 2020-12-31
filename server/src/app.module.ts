@@ -8,8 +8,6 @@ import { FighterClassesModule } from './fighter-classes/fighter-classes.module';
 import { FighterClass } from './fighter-classes/entities/fighter-class.entity';
 import { FighterPrototype } from './fighter-prototypes/entities/fighter-prototype.entity';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
 import { AppController } from './app.controller';
 import { GangsModule } from './gangs/gangs.module';
 import { Gang } from './gangs/entities/gang.entity';
@@ -37,7 +35,6 @@ import { Posting } from './postings/entities/posting.entity';
             Faction,
             FighterClass,
             FighterPrototype,
-            User,
             Gang,
             AccountType,
             Account,
@@ -52,7 +49,6 @@ import { Posting } from './postings/entities/posting.entity';
     FighterPrototypesModule,
     FighterClassesModule,
     AuthModule,
-    UsersModule,
     ConfigModule,
     GangsModule,
     AccountTypesModule,

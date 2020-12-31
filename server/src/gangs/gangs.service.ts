@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Gang } from './entities/gang.entity';
 import { CreateGangDto } from './dto/create-gang.dto';
 import { UpdateGangDto } from './dto/update-gang.dto';
-import { User } from 'src/users/entities/user.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { ACCOUNT_NAMES } from 'src/accounts/accounts.constants';
 import { PostingsService } from 'src/postings/postings.service';
@@ -17,9 +16,7 @@ export class GangsService {
     private postingsService: PostingsService,
   ) {}
 
-  async create(
-    createGangDtoWithUser: CreateGangDto & { user: Omit<User, 'passwordHash'> },
-  ) {
+  async create(createGangDtoWithUser: CreateGangDto & { userId: string }) {
     try {
       const gang = await this.gangsRepository.save(createGangDtoWithUser);
       await this.accountsService.createDefaultAccounts(gang.id);
@@ -32,7 +29,7 @@ export class GangsService {
 
   findByUserId(userId: string) {
     return this.gangsRepository.find({
-      where: { user: { id: userId } },
+      where: { userId },
       relations: ['faction'],
     });
   }

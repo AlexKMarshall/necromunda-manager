@@ -1,5 +1,4 @@
 import { Faction } from 'src/factions/entities/faction.entity';
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -19,10 +18,6 @@ export class Gang {
   @ManyToOne(() => Faction)
   @JoinColumn()
   faction: Faction;
-
-  @ManyToOne(() => User)
-  @JoinColumn()
-  user: User;
 
   @Column()
   userId: string;

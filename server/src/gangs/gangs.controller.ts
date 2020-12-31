@@ -21,8 +21,8 @@ export class GangsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createGangDto: CreateGangDto, @Request() req) {
-    const { user } = req;
-    return this.gangsService.create({ ...createGangDto, user });
+    const { id: userId } = req.user;
+    return this.gangsService.create({ ...createGangDto, userId });
   }
 
   @UseGuards(JwtAuthGuard)

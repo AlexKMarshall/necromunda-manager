@@ -1,20 +1,32 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { useAuth0 } from "@auth0/auth0-react";
 import Factions from "./components/Factions";
 import FighterClasses from "./components/FighterClasses";
 import FighterPrototypes from "./components/FighterPrototypes";
+import LoginButton from "./components/Login";
+import LogoutButton from "./components/Logout";
 
 function App() {
-  const queryClient = new QueryClient();
+  const { isAuthenticated, isLoading } = useAuth0();
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return isAuthenticated ? <AuthenticatedApp /> : <UnauthenticatedApp />;
+}
+
+function AuthenticatedApp() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="App">
-        <Factions />
-        <FighterClasses />
-        <FighterPrototypes />
-      </div>
-    </QueryClientProvider>
+    <>
+      <LogoutButton />
+      <Factions />
+      <FighterClasses />
+      <FighterPrototypes />
+    </>
   );
+}
+
+function UnauthenticatedApp() {
+  return <LoginButton />;
 }
 
 export default App;

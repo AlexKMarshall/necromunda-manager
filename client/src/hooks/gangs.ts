@@ -34,8 +34,6 @@ export function useReadGangDetail(gangId: string) {
   const query = async () => {
     try {
       const data = await client(`gangs/${gangId}`);
-      console.log("received gang");
-      console.log(data);
       return gangDetailSchema.parse(data);
     } catch (error) {
       return Promise.reject(error);

@@ -53,6 +53,25 @@ export default function GangDetail() {
       <Text>{gangDetail.faction.name}</Text>
       <Text>Stash - {gangDetail.stash}</Text>
       <Heading size="md" as="h3">
+        Fighters
+      </Heading>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Type</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {gangDetail.fighters.map((fighter) => (
+            <Tr key={fighter.id}>
+              <Td>{fighter.name ?? "Please name me"}</Td>
+              <Td>{fighter.fighterPrototype.name}</Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+      <Heading size="md" as="h3">
         Available Fighters to Purchase
       </Heading>
       <Table>

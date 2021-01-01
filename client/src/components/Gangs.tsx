@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useRouteMatch, Link } from "react-router-dom";
 import {
   Table,
   Thead,
@@ -57,12 +58,15 @@ export default function Gangs() {
 function GangRow({ gang }: { gang: any }) {
   const { isLoading: isDeleteLoading, deleteGang } = useDeleteGang();
   const isPendingSave = gang.id.startsWith("TEMP");
+  let { url } = useRouteMatch();
 
   const handleDelete = () => deleteGang(gang.id);
 
   return (
     <Tr>
-      <Td>{gang.name}</Td>
+      <Td>
+        <Link to={`${url}/${gang.id}`}>{gang.name}</Link>
+      </Td>
       <Td>{gang.faction.name}</Td>
       <Td>
         {isPendingSave ? (

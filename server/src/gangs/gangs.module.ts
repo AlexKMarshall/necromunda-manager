@@ -5,9 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Gang } from './entities/gang.entity';
 import { AccountsModule } from 'src/accounts/accounts.module';
 import { PostingsModule } from 'src/postings/postings.module';
+import { FightersModule } from 'src/fighters/fighters.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Gang]), AccountsModule, PostingsModule],
+  imports: [
+    TypeOrmModule.forFeature([Gang]),
+    AccountsModule,
+    PostingsModule,
+    FightersModule,
+  ],
   controllers: [GangsController],
   providers: [GangsService],
 })

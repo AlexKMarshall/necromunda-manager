@@ -19,6 +19,7 @@ import { FightersModule } from './fighters/fighters.module';
 import { Fighter } from './fighters/entities/fighter.entity';
 import { PostingsModule } from './postings/postings.module';
 import { Posting } from './postings/entities/posting.entity';
+import { PurchaseModule } from './purchase/purchase.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { Posting } from './postings/entities/posting.entity';
     AccountsModule,
     FightersModule,
     PostingsModule,
+    PurchaseModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -7,6 +7,7 @@ import { UpdateGangDto } from './dto/update-gang.dto';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { ACCOUNT_NAMES } from 'src/accounts/accounts.constants';
 import { PostingsService } from 'src/postings/postings.service';
+import { FightersService } from 'src/fighters/fighters.service';
 
 @Injectable()
 export class GangsService {
@@ -14,6 +15,7 @@ export class GangsService {
     @InjectRepository(Gang) private gangsRepository: Repository<Gang>,
     private accountsService: AccountsService,
     private postingsService: PostingsService,
+    private fightersService: FightersService,
   ) {}
 
   async create(createGangDtoWithUser: CreateGangDto & { userId: string }) {
@@ -86,6 +88,21 @@ export class GangsService {
       initialEquity,
       INITIAL_STASH_VALUE,
     );
+  }
+
+  getGangDetail(gangId: string, userId: string) {
+    const pGang = this.findOne(gangId, userId);
+    const pStash = this.accountsService.getAccountBalance(
+      gangId,
+      ACCOUNT_NAMES.STASH,
+    );
+    const pFighters = this.fightersService.findByGangId(gangId);
+
+    return Promise.all([
+      pGang,
+      pStash,
+      pFighters,
+    ]).then(([gang, stash, fighters]) => ({ ...gang, stash, fighters }));
   }
 }
 

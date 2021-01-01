@@ -1,6 +1,13 @@
 import { AccountType } from 'src/account-types/entities/account-type.entity';
 import { Gang } from 'src/gangs/entities/gang.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Posting } from 'src/postings/entities/posting.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Account {
@@ -18,4 +25,13 @@ export class Account {
 
   @ManyToOne(() => AccountType)
   accountType: AccountType;
+
+  @OneToMany(() => Posting, (posting) => posting.account)
+  postings: Posting[];
+
+  @ManyToOne(() => Account, (account) => account.subAccounts)
+  parentAccount: Account;
+
+  @OneToMany(() => Account, (account) => account.parentAccount)
+  subAccounts: Account[];
 }

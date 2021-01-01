@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Account } from 'src/accounts/entities/account.entity';
 import { Repository } from 'typeorm';
 import { Posting } from './entities/posting.entity';
 
@@ -9,7 +10,11 @@ export class PostingsService {
     @InjectRepository(Posting) private postingsRepository: Repository<Posting>,
   ) {}
 
-  createDoubleEntry(debitAccount, credityAccount, amount) {
+  createDoubleEntry(
+    debitAccount: Account,
+    creditAccount: Account,
+    amount: number,
+  ) {
     //TODO manage this in a database transaction
     const work = [
       this.postingsRepository.save({
@@ -18,7 +23,7 @@ export class PostingsService {
         creditAmount: 0,
       }),
       this.postingsRepository.save({
-        account: credityAccount,
+        account: creditAccount,
         debitAmount: 0,
         creditAmount: amount,
       }),

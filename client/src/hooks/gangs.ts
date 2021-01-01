@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { QUERY_KEYS } from "../constants/query-keys";
-import { CreateGangDto, gangSchema, Gang } from "../schemas/gang.schema";
+import {
+  CreateGangDto,
+  gangSchema,
+  Gang,
+  gangDetailSchema,
+} from "../schemas/gang.schema";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuthClient } from "./client";
 import { createTempId } from "../utils";
@@ -21,6 +26,26 @@ export function useReadGangs() {
   const gangs = queryResult.data ?? [];
 
   return { ...queryResult, gangs };
+}
+
+export function useReadGangDetail(gangId: string) {
+  const client = useAuthClient();
+
+  const query = async () => {
+    try {
+      const data = await client(`gangs/${gangId}`);
+      console.log("received gang");
+      console.log(data);
+      return gangDetailSchema.parse(data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
+  const queryResult = useQuery([QUERY_KEYS.gangs, gangId], query);
+
+  const gangDetail = queryResult.data;
+
+  return { ...queryResult, gangDetail };
 }
 
 export function useCreateGang() {

@@ -65,8 +65,25 @@ export class AccountsService {
 
   findByName(gangId: string, name: string) {
     return this.accountsRepository.find({
-      gangId,
-      name,
+      where: {
+        gangId,
+        name,
+      },
+      relations: ['accountType'],
     });
+  }
+
+  getAccountBalance(gangId: string, accountName: string) {
+    return this.accountsRepository
+      .createQueryBuilder('account')
+      .select(
+        'SUM(posting.debitAmount - posting.creditAmount)',
+        'accountBalance',
+      )
+      .leftJoin('account.postings', 'posting')
+      .where('account.gangId = :gangId ', { gangId })
+      .andWhere('account.name = :accountName', { accountName })
+      .getRawOne()
+      .then(({ accountBalance }) => Number(accountBalance));
   }
 }

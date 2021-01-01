@@ -36,7 +36,7 @@ export class GangsController {
   @Get(':id')
   findOne(@Param('id') id: string, @Request() req) {
     const { id: userId } = req.user;
-    return this.gangsService.findOne(id, userId);
+    return this.gangsService.getGangDetail(id, userId);
   }
 
   @UseGuards(JwtAuthGuard)

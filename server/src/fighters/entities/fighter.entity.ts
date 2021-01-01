@@ -7,7 +7,7 @@ export class Fighter {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @ManyToOne(() => FighterPrototype)

@@ -8,5 +8,6 @@ import { FighterPrototype } from './entities/fighter-prototype.entity';
   imports: [TypeOrmModule.forFeature([FighterPrototype])],
   controllers: [FighterPrototypesController],
   providers: [FighterPrototypesService],
+  exports: [FighterPrototypesService],
 })
 export class FighterPrototypesModule {}

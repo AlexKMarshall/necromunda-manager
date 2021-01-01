@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { factionSchema } from "./faction.schema";
+import { fighterSchema } from "./fighter.schema";
 
 export const gangSchema = z.object({
   name: z.string(),
@@ -15,3 +16,9 @@ export const createGangDtoSchema = gangSchema.omit({
   userId: true,
 });
 export type CreateGangDto = z.infer<typeof createGangDtoSchema>;
+
+export const gangDetailSchema = gangSchema.extend({
+  stash: z.number(),
+  fighters: fighterSchema.array(),
+});
+export type GangDetail = z.infer<typeof gangDetailSchema>;

@@ -6,7 +6,9 @@ export class Posting {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Account, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Account, (account) => account.postings, {
+    onDelete: 'CASCADE',
+  })
   account: Account;
 
   @Column()

@@ -3,5 +3,5 @@ export const QUERY_KEYS = {
   fighterClasses: "fighterClasses",
   fighterPrototypes: "fighterPrototypes",
   gangs: "gangs",
-  itemTypes: "itemTypes",
+  weapons: "weapons",
 };

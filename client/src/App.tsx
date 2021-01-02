@@ -8,7 +8,7 @@ import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
 import Gangs from "./components/Gangs";
 import GangDetail from "./components/GangDetail";
-import ItemTypes from "./components/ItemTypes";
+import Weapons from "./components/Weapons";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -35,7 +35,7 @@ function AuthenticatedApp() {
           <Factions />
           <FighterClasses />
           <FighterPrototypes />
-          <ItemTypes />
+          <Weapons />
         </Route>
         <Route path="/gangs" exact>
           <Gangs />

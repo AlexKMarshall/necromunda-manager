@@ -17,6 +17,7 @@ import { useReadFighterPrototypes } from "../hooks/fighter-prototypes";
 import { useReadGangDetail } from "../hooks/gangs";
 import { useCreatePuchase } from "../hooks/purchase";
 import { FighterPrototype } from "../schemas/fighter-prototype.schema";
+import Fighters from "./Fighters";
 
 interface Basket {
   items: FighterPrototype[];
@@ -52,25 +53,7 @@ export default function GangDetail() {
       <Heading>{gangDetail.name}</Heading>
       <Text>{gangDetail.faction.name}</Text>
       <Text>Stash - {gangDetail.stash}</Text>
-      <Heading size="md" as="h3">
-        Fighters
-      </Heading>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Type</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {gangDetail.fighters.map((fighter) => (
-            <Tr key={fighter.id}>
-              <Td>{fighter.name ?? "Please name me"}</Td>
-              <Td>{fighter.fighterPrototype.name}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      <Fighters fighters={gangDetail.fighters} />
       <Heading size="md" as="h3">
         Available Fighters to Purchase
       </Heading>

@@ -20,6 +20,8 @@ import { Fighter } from './fighters/entities/fighter.entity';
 import { PostingsModule } from './postings/postings.module';
 import { Posting } from './postings/entities/posting.entity';
 import { PurchaseModule } from './purchase/purchase.module';
+import { ItemTypesModule } from './item-types/item-types.module';
+import { ItemType } from './item-types/entities/item-type.entity';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { PurchaseModule } from './purchase/purchase.module';
             Account,
             Fighter,
             Posting,
+            ItemType,
           ],
           synchronize: true,
         };
@@ -57,6 +60,7 @@ import { PurchaseModule } from './purchase/purchase.module';
     FightersModule,
     PostingsModule,
     PurchaseModule,
+    ItemTypesModule,
   ],
   controllers: [AppController],
   providers: [],

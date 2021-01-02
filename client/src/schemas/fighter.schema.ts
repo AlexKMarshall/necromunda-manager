@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { factionSchema } from "./faction.schema";
 import { fighterPrototypeSchema } from "./fighter-prototype.schema";
 
 export const fighterSchema = z.object({
@@ -10,7 +9,9 @@ export const fighterSchema = z.object({
     id: true,
     cost: true,
   }),
+  cost: z.number(),
   gangId: z.string(),
+  xp: z.number(),
 });
 
 export type Fighter = z.infer<typeof fighterSchema>;

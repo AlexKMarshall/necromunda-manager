@@ -18,4 +18,7 @@ export class Fighter {
 
   @Column()
   gangId: string;
+
+  @Column()
+  xp: number;
 }

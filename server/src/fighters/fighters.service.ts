@@ -19,6 +19,7 @@ export class FightersService {
       const fighter = await this.fightersRepository.save({
         ...createFighterDto,
         gangId,
+        xp: 0,
       });
       const [fighterParentAccount] = await this.accountsService.findByName(
         gangId,
@@ -39,11 +40,25 @@ export class FightersService {
     }
   }
 
-  findByGangId(gangId: string) {
-    return this.fightersRepository.find({
-      where: { gangId },
-      relations: ['fighterPrototype'],
-    });
+  async findByGangId(gangId: string) {
+    try {
+      const fighters = await this.fightersRepository.find({
+        where: { gangId },
+        relations: ['fighterPrototype'],
+      });
+
+      const pCosts = fighters.map((f) =>
+        this.accountsService.getAccountBalance(gangId, f.id),
+      );
+      const costs = await Promise.all(pCosts);
+
+      return fighters.map((fighter, index) => ({
+        ...fighter,
+        cost: costs[index],
+      }));
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   async findOne(id: string) {

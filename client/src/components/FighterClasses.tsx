@@ -1,12 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Heading,
   Box,
   FormLabel,
@@ -26,6 +20,8 @@ import {
   createFighterClassDtoSchema,
   FighterClass,
 } from "../schemas/fighter-class.schema";
+import { useMemo } from "react";
+import AdminTable from "./AdminTable";
 
 export default function FighterClasses() {
   const { isLoading, isError, error, fighterClasses } = useReadFighterClasses();
@@ -39,22 +35,7 @@ export default function FighterClasses() {
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
-          <Table variant="simple" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Fighter Class Name</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {fighterClasses.map((fighterClass) => (
-                <FighterClassRow
-                  fighterClass={fighterClass}
-                  key={fighterClass.id}
-                />
-              ))}
-            </Tbody>
-          </Table>
+          <FighterClassesTable fighterClasses={fighterClasses} />
         )}
         <CreateFighterClass />
       </Stack>
@@ -62,35 +43,41 @@ export default function FighterClasses() {
   );
 }
 
-interface FighterClassRowProps {
-  fighterClass: FighterClass;
+interface FighterClassesTableProps {
+  fighterClasses: FighterClass[];
 }
 
-function FighterClassRow({ fighterClass }: FighterClassRowProps) {
+function FighterClassesTable({ fighterClasses }: FighterClassesTableProps) {
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Fighter Class Name",
+        accessor: "name" as const,
+      },
+    ],
+    []
+  );
+
+  return (
+    <AdminTable
+      columns={columns}
+      data={fighterClasses}
+      deleteButton={DeleteFighterClass}
+    />
+  );
+}
+
+function DeleteFighterClass({ id }: { id: string }) {
   const {
     isLoading: isDeleteLoading,
     deleteFighterClass,
   } = useDeleteFighterClass();
-  const isPendingSave = fighterClass.id.startsWith("TEMP");
+  const handleDelete = () => deleteFighterClass(id);
 
-  const handleDelete = () => deleteFighterClass(fighterClass.id);
   return (
-    <Tr>
-      <Td>{fighterClass.name}</Td>
-      <Td>
-        {isPendingSave ? (
-          <Spinner />
-        ) : (
-          <Button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleteLoading}
-          >
-            Delete
-          </Button>
-        )}
-      </Td>
-    </Tr>
+    <Button onClick={handleDelete} disabled={isDeleteLoading}>
+      Delete
+    </Button>
   );
 }
 

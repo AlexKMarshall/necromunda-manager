@@ -1,11 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
   Td,
   Heading,
   Box,
@@ -29,6 +24,8 @@ import {
   WeaponType,
   weaponTypes,
 } from "../schemas/weapon.schema";
+import AdminTable from "./AdminTable";
+import { useMemo } from "react";
 
 export default function Weapons() {
   const { isLoading, isError, error, weapons } = useReadWeapons();
@@ -42,21 +39,7 @@ export default function Weapons() {
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
-          <Table variant="simple" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Type</Th>
-                <Th>Cost</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {weapons.map((weapon) => (
-                <WeaponRow key={weapon.id} weapon={weapon} />
-              ))}
-            </Tbody>
-          </Table>
+          <WeaponsTable weapons={weapons} />
         )}
       </Stack>
       <CreateWeapon />
@@ -64,31 +47,42 @@ export default function Weapons() {
   );
 }
 
-function WeaponRow({ weapon }: { weapon: Weapon }) {
-  const { isLoading: isDeleteLoading, deleteWeapon } = useDeleteWeapon();
-  const isPendingSave = weapon.id.startsWith("TEMP");
+interface WeaponsTableProps {
+  weapons: Weapon[];
+}
 
-  const handleDelete = () => deleteWeapon(weapon.id);
+function WeaponsTable({ weapons }: WeaponsTableProps) {
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: "name" as const,
+      },
+      {
+        Header: "Type",
+        accessor: "weaponType" as const,
+      },
+      {
+        Header: "Cost",
+        accessor: "cost" as const,
+      },
+    ],
+    []
+  );
 
   return (
-    <Tr>
-      <Td>{weapon.name}</Td>
-      <Td>{weapon.weaponType}</Td>
-      <Td>{weapon.cost}</Td>
-      <Td>
-        {isPendingSave ? (
-          <Spinner />
-        ) : (
-          <Button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleteLoading}
-          >
-            Delete
-          </Button>
-        )}
-      </Td>
-    </Tr>
+    <AdminTable columns={columns} data={weapons} deleteButton={DeleteWeapon} />
+  );
+}
+
+function DeleteWeapon({ id }: { id: string }) {
+  const { isLoading: isDeleteLoading, deleteWeapon } = useDeleteWeapon();
+  const handleDelete = () => deleteWeapon(id);
+
+  return (
+    <Button onClick={handleDelete} disabled={isDeleteLoading}>
+      Delete
+    </Button>
   );
 }
 

@@ -1,12 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Heading,
   Box,
   FormLabel,
@@ -23,6 +17,8 @@ import {
   useReadFactions,
 } from "../hooks/factions";
 import { createFactionDtoSchema, Faction } from "../schemas/faction.schema";
+import { useMemo } from "react";
+import AdminTable from "./AdminTable";
 
 export default function Factions() {
   const { isLoading, isError, error, factions } = useReadFactions();
@@ -36,21 +32,7 @@ export default function Factions() {
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
-          <Table variant="simple" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Faction Name</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {factions
-                ? factions.map((faction) => (
-                    <FactionRow key={faction.id} faction={faction} />
-                  ))
-                : null}
-            </Tbody>
-          </Table>
+          <FactionsTable factions={factions} />
         )}
       </Stack>
       <CreateFaction />
@@ -58,29 +40,38 @@ export default function Factions() {
   );
 }
 
-function FactionRow({ faction }: { faction: Faction }) {
-  const { isLoading: isDeleteLoading, deleteFaction } = useDeleteFaction();
-  const isPendingSave = faction.id.startsWith("TEMP");
+interface FactionsTableProps {
+  factions: Faction[];
+}
 
-  const handleDelete = () => deleteFaction(faction.id);
+function FactionsTable({ factions }: FactionsTableProps) {
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Faction Name",
+        accessor: "name" as const,
+      },
+    ],
+    []
+  );
 
   return (
-    <Tr>
-      <Td>{faction.name}</Td>
-      <Td>
-        {isPendingSave ? (
-          <Spinner />
-        ) : (
-          <Button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleteLoading}
-          >
-            Delete
-          </Button>
-        )}
-      </Td>
-    </Tr>
+    <AdminTable
+      columns={columns}
+      data={factions}
+      deleteButton={DeleteFaction}
+    />
+  );
+}
+
+function DeleteFaction({ id }: { id: string }) {
+  const { isLoading: isDeleteLoading, deleteFaction } = useDeleteFaction();
+  const handleDelete = () => deleteFaction(id);
+
+  return (
+    <Button onClick={handleDelete} disabled={isDeleteLoading}>
+      Delete
+    </Button>
   );
 }
 

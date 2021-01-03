@@ -8,12 +8,14 @@ import {
 import { createTempId, sortByField } from "../utils";
 import { useAuthClient } from "./client";
 
+const endpoint = "factions";
+
 export function useReadFactions() {
   const client = useAuthClient();
 
   const query = async () => {
     try {
-      const data = await client("factions");
+      const data = await client(endpoint);
       return factionSchema.array().parse(data).sort(sortByField("name"));
     } catch (error) {
       return Promise.reject(error);
@@ -31,7 +33,7 @@ export function useCreateFaction() {
   const client = useAuthClient();
   const queryClient = useQueryClient();
 
-  const query = (faction: CreateFactionDto) => client("factions", faction);
+  const query = (faction: CreateFactionDto) => client(endpoint, faction);
 
   const mutationResult = useMutation(query, {
     onMutate: async (faction) => {
@@ -67,7 +69,7 @@ export function useDeleteFaction() {
   const queryClient = useQueryClient();
 
   const query = (factionId: string) =>
-    client(`factions/${factionId}`, undefined, { method: "DELETE" });
+    client(`${endpoint}/${factionId}`, undefined, { method: "DELETE" });
 
   const mutationResult = useMutation(query, {
     onMutate: async (factionId) => {

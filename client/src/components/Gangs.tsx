@@ -1,12 +1,7 @@
 import { useForm } from "react-hook-form";
+import { Row, CellValue } from "react-table";
 import { useRouteMatch, Link } from "react-router-dom";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Heading,
   Box,
   FormLabel,
@@ -20,7 +15,9 @@ import { Form, FormControl } from "./Form";
 
 import { useReadFactions } from "../hooks/factions";
 import { useCreateGang, useDeleteGang, useReadGangs } from "../hooks/gangs";
-import { createGangDtoSchema } from "../schemas/gang.schema";
+import { createGangDtoSchema, Gang } from "../schemas/gang.schema";
+import { useMemo } from "react";
+import AdminTable from "./AdminTable";
 
 export default function Gangs() {
   const { isLoading, isError, error, gangs } = useReadGangs();
@@ -34,20 +31,7 @@ export default function Gangs() {
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
-          <Table variant="simple" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Name</Th>
-                <Th>Faction</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {gangs.map((gang: any) => (
-                <GangRow gang={gang} key={gang.id} />
-              ))}
-            </Tbody>
-          </Table>
+          <GangsTable gangs={gangs} />
         )}
         <CreateGang />
       </Stack>
@@ -55,33 +39,46 @@ export default function Gangs() {
   );
 }
 
-function GangRow({ gang }: { gang: any }) {
-  const { isLoading: isDeleteLoading, deleteGang } = useDeleteGang();
-  const isPendingSave = gang.id.startsWith("TEMP");
-  let { url } = useRouteMatch();
+interface GangsTableProps {
+  gangs: Gang[];
+}
 
-  const handleDelete = () => deleteGang(gang.id);
+function GangsTable({ gangs }: GangsTableProps) {
+  let { url } = useRouteMatch();
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: "name" as const,
+        Cell: ({
+          row: { original },
+          value,
+        }: {
+          row: Row<Gang>;
+          value: CellValue;
+        }) => <Link to={`${url}/${original.id}`}>{value}</Link>,
+      },
+      {
+        Header: "Faction",
+        accessor: "faction.name" as const,
+      },
+    ],
+    [url]
+  );
 
   return (
-    <Tr>
-      <Td>
-        <Link to={`${url}/${gang.id}`}>{gang.name}</Link>
-      </Td>
-      <Td>{gang.faction.name}</Td>
-      <Td>
-        {isPendingSave ? (
-          <Spinner />
-        ) : (
-          <Button
-            type="button"
-            onClick={handleDelete}
-            isDisabled={isDeleteLoading}
-          >
-            Delete
-          </Button>
-        )}
-      </Td>
-    </Tr>
+    <AdminTable columns={columns} data={gangs} deleteButton={DeleteGang} />
+  );
+}
+
+function DeleteGang({ id }: { id: string }) {
+  const { isLoading: isDeleteLoading, deleteGang } = useDeleteGang();
+  const handleDelete = () => deleteGang(id);
+
+  return (
+    <Button onClick={handleDelete} disabled={isDeleteLoading}>
+      Delete
+    </Button>
   );
 }
 

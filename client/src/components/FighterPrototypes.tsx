@@ -1,11 +1,5 @@
 import { useForm } from "react-hook-form";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Heading,
   Box,
   FormLabel,
@@ -27,6 +21,8 @@ import {
   createFighterPrototypeDtoSchema,
   FighterPrototype,
 } from "../schemas/fighter-prototype.schema";
+import { useMemo } from "react";
+import AdminTable from "./AdminTable";
 
 export default function FighterPrototypes() {
   const {
@@ -45,22 +41,7 @@ export default function FighterPrototypes() {
         ) : isError ? (
           <pre>{JSON.stringify(error, null, 2)}</pre>
         ) : (
-          <Table variant="simple" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Faction</Th>
-                <Th>Name</Th>
-                <Th>Class</Th>
-                <Th>Cost</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {fighterPrototypes.map((fp: any) => (
-                <FighterPrototypeRow fighterPrototype={fp} key={fp.id} />
-              ))}
-            </Tbody>
-          </Table>
+          <FighterPrototypesTable fighterPrototypes={fighterPrototypes} />
         )}
         <CreateFighterPrototype />
       </Stack>
@@ -68,39 +49,55 @@ export default function FighterPrototypes() {
   );
 }
 
-interface FighterPrototypeRowProps {
-  fighterPrototype: FighterPrototype;
+interface FighterPrototypesTableProps {
+  fighterPrototypes: FighterPrototype[];
 }
 
-function FighterPrototypeRow({ fighterPrototype }: FighterPrototypeRowProps) {
+function FighterPrototypesTable({
+  fighterPrototypes,
+}: FighterPrototypesTableProps) {
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Faction",
+        accessor: "faction.name" as const,
+      },
+      {
+        Header: "Name",
+        accessor: "name" as const,
+      },
+      {
+        Header: "Class",
+        accessor: "fighterClass.name" as const,
+      },
+      {
+        Header: "Cost",
+        accessor: "cost" as const,
+      },
+    ],
+    []
+  );
+
+  return (
+    <AdminTable
+      columns={columns}
+      data={fighterPrototypes}
+      deleteButton={DeleteFighterPrototype}
+    />
+  );
+}
+
+function DeleteFighterPrototype({ id }: { id: string }) {
   const {
     isLoading: isDeleteLoading,
     deleteFighterPrototype,
   } = useDeleteFighterPrototype();
-  const isPendingSave = fighterPrototype.id.startsWith("TEMP");
-
-  const handleDelete = () => deleteFighterPrototype(fighterPrototype.id);
+  const handleDelete = () => deleteFighterPrototype(id);
 
   return (
-    <Tr>
-      <Td>{fighterPrototype.faction.name}</Td>
-      <Td>{fighterPrototype.name}</Td>
-      <Td>{fighterPrototype.fighterClass.name}</Td>
-      <Td>{fighterPrototype.cost}</Td>
-      <Td>
-        {isPendingSave ? (
-          <Spinner />
-        ) : (
-          <Button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleteLoading}
-          >
-            Delete
-          </Button>
-        )}
-      </Td>
-    </Tr>
+    <Button onClick={handleDelete} disabled={isDeleteLoading}>
+      Delete
+    </Button>
   );
 }
 

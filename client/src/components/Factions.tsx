@@ -10,6 +10,7 @@ import {
   Spinner,
   FormErrorMessage,
 } from "@chakra-ui/react";
+import { HiOutlineTrash } from "react-icons/hi";
 import { Form, FormControl } from "./Form";
 import {
   useCreateFaction,
@@ -19,6 +20,7 @@ import {
 import { createFactionDtoSchema, Faction } from "../schemas/faction.schema";
 import { useMemo } from "react";
 import AdminTable from "./AdminTable";
+import { useAsyncButton } from "../hooks/async";
 
 export default function Factions() {
   const { isLoading, isError, error, factions } = useReadFactions();
@@ -65,12 +67,13 @@ function FactionsTable({ factions }: FactionsTableProps) {
 }
 
 function DeleteFaction({ id }: { id: string }) {
-  const { isLoading: isDeleteLoading, deleteFaction } = useDeleteFaction();
+  const { deleteFaction } = useDeleteFaction();
   const handleDelete = () => deleteFaction(id);
+  const { isLoading, getAsyncButtonProps } = useAsyncButton();
 
   return (
-    <Button onClick={handleDelete} disabled={isDeleteLoading}>
-      Delete
+    <Button {...getAsyncButtonProps({ onClick: handleDelete })}>
+      {isLoading ? <Spinner /> : <HiOutlineTrash />}
     </Button>
   );
 }
@@ -86,6 +89,7 @@ function CreateFaction() {
   });
 
   const onSubmit = async (formData: FactionFormData) => {
+    if (isLoading) return;
     await postFaction(formData);
     reset();
   };

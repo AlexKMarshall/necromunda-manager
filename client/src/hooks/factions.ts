@@ -1,4 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  UseMutationOptions,
+} from "react-query";
 import { QUERY_KEYS } from "../constants/query-keys";
 import {
   Faction,
@@ -29,6 +35,21 @@ export function useReadFactions() {
   return { ...queryResult, factions };
 }
 
+function defaultMutationConfig<TData, TError, TVariables, TContext>(
+  queryClient: QueryClient
+): UseMutationOptions<TData, TError, TVariables, TContext> {
+  return {
+    onError: (err, variables, recover) => {
+      if (typeof recover === "function") {
+        recover();
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(QUERY_KEYS.factions);
+    },
+  };
+}
+
 export function useCreateFaction() {
   const client = useAuthClient();
   const queryClient = useQueryClient();
@@ -47,19 +68,14 @@ export function useCreateFaction() {
         const newFaction = { id: createTempId(), name: faction.name };
         return [...oldFactions, newFaction].sort(sortByField("name"));
       });
-      return { previousFactions };
+
+      return () =>
+        queryClient.setQueryData(QUERY_KEYS.factions, previousFactions);
     },
-    onError: (err, faction, context) => {
-      queryClient.setQueryData(
-        QUERY_KEYS.factions,
-        // TODO can this be improved
-        (context as any).previousFactions
-      );
-    },
-    onSettled: () => queryClient.invalidateQueries(QUERY_KEYS.factions),
+    ...defaultMutationConfig(queryClient),
   });
 
-  const postFaction = mutationResult.mutate;
+  const postFaction = mutationResult.mutateAsync;
 
   return { ...mutationResult, postFaction };
 }
@@ -75,26 +91,20 @@ export function useDeleteFaction() {
     onMutate: async (factionId) => {
       await queryClient.cancelQueries(QUERY_KEYS.factions);
 
-      const previousFactions =
-        queryClient.getQueryData<Faction[]>(QUERY_KEYS.factions) ?? [];
+      const previousFactions = queryClient.getQueryData(QUERY_KEYS.factions);
 
       queryClient.setQueryData<Faction[]>(QUERY_KEYS.factions, (old) =>
         old ? old.filter((f) => f.id !== factionId) : []
       );
 
-      return { previousFactions };
+      return () => {
+        queryClient.setQueryData(QUERY_KEYS.factions, previousFactions);
+      };
     },
-    onError: (err, factionId, context) => {
-      queryClient.setQueryData(
-        QUERY_KEYS.factions,
-        // TODO can this be improved
-        (context as any).previousFactions
-      );
-    },
-    onSettled: () => queryClient.invalidateQueries(QUERY_KEYS.factions),
+    ...defaultMutationConfig(queryClient),
   });
 
-  const deleteFaction = mutationResult.mutate;
+  const deleteFaction = mutationResult.mutateAsync;
 
   return { ...mutationResult, deleteFaction };
 }

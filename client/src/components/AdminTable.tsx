@@ -1,5 +1,5 @@
 import { useTable } from "react-table";
-import { Spinner, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { useCallback, useMemo } from "react";
 
 interface AdminTableProps {
@@ -15,7 +15,7 @@ export default function AdminTable({
 }: AdminTableProps) {
   const renderDeleteButton = useCallback(
     ({ value }: { value: string }) =>
-      value.startsWith("TEMP") ? <Spinner /> : <DeleteButton id={value} />,
+      value.startsWith("TEMP") ? null : <DeleteButton id={value} />,
     [DeleteButton]
   );
 

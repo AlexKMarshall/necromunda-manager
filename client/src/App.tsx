@@ -7,6 +7,7 @@ import FighterPrototypes from "./components/FighterPrototypes";
 import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
 import Gangs from "./components/Gangs";
+import GangDetail from "./components/GangDetail";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -36,6 +37,9 @@ function AuthenticatedApp() {
         </Route>
         <Route path="/gangs" exact>
           <Gangs />
+        </Route>
+        <Route path="/gangs/:gangId">
+          <GangDetail />
         </Route>
       </Switch>
     </>

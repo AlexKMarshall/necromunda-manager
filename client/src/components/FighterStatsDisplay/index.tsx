@@ -2,7 +2,7 @@
 import React from "react";
 import { css } from "@emotion/react";
 import { VisuallyHidden } from "@chakra-ui/react";
-import { FighterStats } from "../schemas/fighter.schema";
+import { FighterStats } from "../../schemas/fighter.schema";
 
 const dlStyle = css`
   display: grid;
@@ -56,7 +56,7 @@ export default function FighterStatsDisplay({
   fighterStats,
 }: FighterStatsProps) {
   function renderStat({ statKey, label, suffix }: FighterStatMeta) {
-    const id = `${fighterId}-${suffix}`;
+    const id = `${fighterId}-${statKey}`;
     return (
       <React.Fragment>
         <dt aria-hidden>{statKey.toUpperCase()}</dt>

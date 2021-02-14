@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
+import React from "react";
 import { css } from "@emotion/react";
+import { VisuallyHidden } from "@chakra-ui/react";
 import { FighterStats } from "../schemas/fighter.schema";
 
 const dlStyle = css`
@@ -22,58 +24,68 @@ const psychologyStyle = css`
 
 type FighterStatMeta = {
   statKey: keyof FighterStats;
-  "aria-label": string;
+  label: string;
   suffix?: string;
 };
+
+const regularStats: FighterStatMeta[] = [
+  { statKey: "m", label: "Movement", suffix: '"' },
+  { statKey: "ws", label: "Weapon skill", suffix: "+" },
+  { statKey: "bs", label: "Ballistic skill", suffix: "+" },
+  { statKey: "s", label: "Strength" },
+  { statKey: "t", label: "Toughness" },
+  { statKey: "w", label: "Wounds" },
+  { statKey: "i", label: "Initiative" },
+  { statKey: "a", label: "Attacks" },
+];
+
+const psychologyStats: FighterStatMeta[] = [
+  { statKey: "ld", label: "Leadership", suffix: "+" },
+  { statKey: "cl", label: "Cool", suffix: "+" },
+  { statKey: "wil", label: "Will", suffix: "+" },
+  { statKey: "int", label: "Intelligence", suffix: "+" },
+];
 
 interface FighterStatsProps {
   fighterId: string;
   fighterStats: FighterStats;
 }
 
-const regularStats: FighterStatMeta[] = [
-  { statKey: "m", "aria-label": "Movement", suffix: '"' },
-  { statKey: "ws", "aria-label": "Weapon skill", suffix: "+" },
-  { statKey: "bs", "aria-label": "Ballistic skill", suffix: "+" },
-  { statKey: "s", "aria-label": "Strength" },
-  { statKey: "t", "aria-label": "Toughness" },
-  { statKey: "w", "aria-label": "Wounds" },
-  { statKey: "i", "aria-label": "Initiative" },
-  { statKey: "a", "aria-label": "Attacks" },
-];
-
-const psychologyStats: FighterStatMeta[] = [
-  { statKey: "ld", "aria-label": "Leadership", suffix: "+" },
-  { statKey: "cl", "aria-label": "Cool", suffix: "+" },
-  { statKey: "wil", "aria-label": "Will", suffix: "+" },
-  { statKey: "int", "aria-label": "Intelligence", suffix: "+" },
-];
-
 export default function FighterStatsDisplay({
   fighterId,
   fighterStats,
 }: FighterStatsProps) {
+  function renderStat({ statKey, label, suffix }: FighterStatMeta) {
+    const id = `${fighterId}-${suffix}`;
+    return (
+      <React.Fragment>
+        <dt aria-hidden>{statKey.toUpperCase()}</dt>
+        <VisuallyHidden>
+          <dt id={id}>{label}</dt>
+        </VisuallyHidden>
+        <dd aria-labelledby={id}>{`${fighterStats[statKey]}${
+          suffix ?? ""
+        }`}</dd>
+      </React.Fragment>
+    );
+  }
+
   return (
     <dl css={dlStyle}>
-      {regularStats.map(({ statKey, suffix }) => (
-        <div key={`${fighterId}-${statKey}`}>
-          <dt>{statKey.toUpperCase()}</dt>
-          <dd>{`${fighterStats[statKey]}${suffix ?? ""}`}</dd>
-        </div>
+      {regularStats.map((stat) => (
+        <div key={`${fighterId}-${stat.statKey}`}>{renderStat(stat)}</div>
       ))}
-      {psychologyStats.slice(0, 1).map(({ statKey, suffix }) => (
+      {psychologyStats.slice(0, 1).map((stat) => (
         <div
-          key={`${fighterId}-${statKey}`}
+          key={`${fighterId}-${stat.statKey}`}
           css={[psychologyStyle, { borderLeft: `2px solid ${primaryRedDark}` }]}
         >
-          <dt>{statKey.toUpperCase()}</dt>
-          <dd>{`${fighterStats[statKey]}${suffix ?? ""}`}</dd>
+          {renderStat(stat)}
         </div>
       ))}
-      {psychologyStats.slice(1).map(({ statKey, suffix }) => (
-        <div key={`${fighterId}-${statKey}`} css={psychologyStyle}>
-          <dt>{statKey.toUpperCase()}</dt>
-          <dd>{`${fighterStats[statKey]}${suffix ?? ""}`}</dd>
+      {psychologyStats.slice(1).map((stat) => (
+        <div key={`${fighterId}-${stat.statKey}`} css={psychologyStyle}>
+          {renderStat(stat)}
         </div>
       ))}
     </dl>

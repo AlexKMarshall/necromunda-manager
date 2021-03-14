@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useReadGangDetail } from "../hooks/gangs";
-import { FighterStats } from "../schemas/fighter.schema";
-import FighterStatsDisplay from "./FighterStatsDisplay";
+import { FighterStats as FighterStatsType } from "../schemas/fighter.schema";
+import { FighterStats } from "./FighterStatsDisplay";
 
 type GangDetailParams = {
   gangId: string;
@@ -27,15 +27,12 @@ export default function GangDetail() {
           </li>
         ))}
       </ul>
-      <FighterStatsDisplay
-        fighterId="abc123"
-        fighterStats={sampleFighterStats}
-      />
+      <FighterStats fighterId="abc123" fighterStats={sampleFighterStats} />
     </div>
   );
 }
 
-const sampleFighterStats: FighterStats = {
+const sampleFighterStats: FighterStatsType = {
   m: 5,
   ws: 2,
   bs: 3,

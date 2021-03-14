@@ -87,12 +87,9 @@ interface FighterClassFormData {
 
 function CreateFighterClass() {
   const { isLoading, postFighterClass } = useCreateFighterClass();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    errors,
-  } = useForm<FighterClassFormData>({
+  const { register, handleSubmit, reset, errors } = useForm<
+    FighterClassFormData
+  >({
     resolver: zodResolver(createFighterClassDtoSchema),
   });
 

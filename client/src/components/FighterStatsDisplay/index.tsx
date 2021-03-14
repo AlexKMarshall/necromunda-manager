@@ -2,7 +2,7 @@
 import React from "react";
 import { css } from "@emotion/react";
 import { VisuallyHidden } from "@chakra-ui/react";
-import { FighterStats } from "../../schemas/fighter.schema";
+import { FighterStats as FighterStatsType } from "../../schemas/fighter.schema";
 
 const dlStyle = css`
   display: grid;
@@ -11,6 +11,10 @@ const dlStyle = css`
 
   & dt {
     border-bottom: 1px solid black;
+  }
+
+  & dd {
+    margin-inline-start: 0;
   }
 `;
 
@@ -23,7 +27,7 @@ const psychologyStyle = css`
 `;
 
 type FighterStatMeta = {
-  statKey: keyof FighterStats;
+  statKey: keyof FighterStatsType;
   label: string;
   suffix?: string;
 };
@@ -46,15 +50,12 @@ const psychologyStats: FighterStatMeta[] = [
   { statKey: "int", label: "Intelligence", suffix: "+" },
 ];
 
-interface FighterStatsProps {
+export interface FighterStatsProps {
   fighterId: string;
-  fighterStats: FighterStats;
+  fighterStats: FighterStatsType;
 }
 
-export default function FighterStatsDisplay({
-  fighterId,
-  fighterStats,
-}: FighterStatsProps) {
+export function FighterStats({ fighterId, fighterStats }: FighterStatsProps) {
   function renderStat({ statKey, label, suffix }: FighterStatMeta) {
     const id = `${fighterId}-${statKey}`;
     return (

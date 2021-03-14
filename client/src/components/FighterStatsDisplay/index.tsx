@@ -27,10 +27,10 @@ const psychologyStyle = css`
   background-color: var(--primary-red-transparant);
 `;
 
-type FighterStatsDisplay = Record<keyof FighterStatsType, string>;
+export type FighterStatsDisplayType = Record<keyof FighterStatsType, string>;
 interface FighterStatMeta {
-  statKey: keyof FighterStatsDisplay;
-  render: (statKey: keyof FighterStatsDisplay) => ReactNode;
+  statKey: keyof FighterStatsDisplayType;
+  render: (statKey: keyof FighterStatsDisplayType) => ReactNode;
   label: string;
   type: "regular" | "psychology";
 }
@@ -91,10 +91,13 @@ function renderDropCap(word: string) {
 
 export interface FighterStatsProps {
   fighterId: string;
-  fighterStats: FighterStatsDisplay;
+  fighterStats: FighterStatsDisplayType;
 }
 
-export function FighterStats({ fighterId, fighterStats }: FighterStatsProps) {
+export function FighterStatsDisplay({
+  fighterId,
+  fighterStats,
+}: FighterStatsProps) {
   const regularStats = fighterStatsMetas.filter(
     ({ type }) => type === "regular"
   );

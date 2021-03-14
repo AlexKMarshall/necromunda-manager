@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTable } from "react-table";
 
-interface WeaponStatsDisplay {
+export interface WeaponStatsDisplay {
   rng: {
     s: string;
     l: string;

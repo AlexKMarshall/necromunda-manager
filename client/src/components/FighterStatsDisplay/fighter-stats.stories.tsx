@@ -2,14 +2,16 @@ import React from "react";
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import { FighterStats, FighterStatsProps } from ".";
+import { FighterStatsDisplay, FighterStatsProps } from ".";
 
 export default {
   title: "FighterStats",
-  component: FighterStats,
+  component: FighterStatsDisplay,
 } as Meta;
 
-const Template: Story<FighterStatsProps> = (args) => <FighterStats {...args} />;
+const Template: Story<FighterStatsProps> = (args) => (
+  <FighterStatsDisplay {...args} />
+);
 
 export const Basic = Template.bind({});
 Basic.args = {

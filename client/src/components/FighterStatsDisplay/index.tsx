@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import React, { ReactNode } from "react";
 import { css } from "@emotion/react";
 import { VisuallyHidden } from "@chakra-ui/react";
 import { FighterStats as FighterStatsType } from "../../schemas/fighter.schema";
@@ -27,84 +27,90 @@ const psychologyStyle = css`
   background-color: var(--primary-red-transparant);
 `;
 
-type FighterStatMeta = {
-  statKey: keyof FighterStatsType;
-  render: React.ReactNode;
+type FighterStatsDisplay = Record<keyof FighterStatsType, string>;
+interface FighterStatMeta {
+  statKey: keyof FighterStatsDisplay;
+  render: (statKey: keyof FighterStatsDisplay) => ReactNode;
   label: string;
-  suffix?: string;
-};
+  type: "regular" | "psychology";
+}
 
-const regularStats: FighterStatMeta[] = [
-  { statKey: "m", render: "M", label: "Movement", suffix: '"' },
-  { statKey: "ws", render: "WS", label: "Weapon skill", suffix: "+" },
-  { statKey: "bs", render: "BS", label: "Ballistic skill", suffix: "+" },
-  { statKey: "s", render: "S", label: "Strength" },
-  { statKey: "t", render: "T", label: "Toughness" },
-  { statKey: "w", render: "W", label: "Wounds" },
-  { statKey: "i", render: "I", label: "Initiative" },
-  { statKey: "a", render: "A", label: "Attacks" },
-];
-
-const psychologyStats: FighterStatMeta[] = [
+const fighterStatsMetas: FighterStatMeta[] = [
+  { statKey: "m", render: capitalize, label: "Movement", type: "regular" },
+  { statKey: "ws", render: capitalize, label: "Weapon skill", type: "regular" },
+  {
+    statKey: "bs",
+    render: capitalize,
+    label: "Ballistic skill",
+    type: "regular",
+  },
+  { statKey: "s", render: capitalize, label: "Strength", type: "regular" },
+  { statKey: "t", render: capitalize, label: "Toughness", type: "regular" },
+  { statKey: "w", render: capitalize, label: "Wounds", type: "regular" },
+  { statKey: "i", render: capitalize, label: "Initiative", type: "regular" },
+  { statKey: "a", render: capitalize, label: "Attacks", type: "regular" },
   {
     statKey: "ld",
-    render: (
-      <>
-        L<span className="text-sm">D</span>
-      </>
-    ),
+    render: renderDropCap,
     label: "Leadership",
-    suffix: "+",
+    type: "psychology",
   },
   {
     statKey: "cl",
-    render: (
-      <>
-        C<span className="text-sm">L</span>
-      </>
-    ),
+    render: renderDropCap,
     label: "Cool",
-    suffix: "+",
+    type: "psychology",
   },
   {
     statKey: "wil",
-    render: (
-      <>
-        W<span className="text-sm">IL</span>
-      </>
-    ),
+    render: renderDropCap,
     label: "Will",
-    suffix: "+",
+    type: "psychology",
   },
   {
     statKey: "int",
-    render: (
-      <>
-        I<span className="text-sm">NT</span>
-      </>
-    ),
+    render: renderDropCap,
     label: "Intelligence",
-    suffix: "+",
+    type: "psychology",
   },
 ];
 
+function capitalize(word: string) {
+  return word.toUpperCase();
+}
+
+function renderDropCap(word: string) {
+  const capitalizedWord = capitalize(word);
+  return (
+    <>
+      {capitalizedWord.slice(0, 1)}
+      <span className="text-sm">{capitalizedWord.slice(1)}</span>
+    </>
+  );
+}
+
 export interface FighterStatsProps {
   fighterId: string;
-  fighterStats: FighterStatsType;
+  fighterStats: FighterStatsDisplay;
 }
 
 export function FighterStats({ fighterId, fighterStats }: FighterStatsProps) {
-  function renderStat({ statKey, render, label, suffix }: FighterStatMeta) {
+  const regularStats = fighterStatsMetas.filter(
+    ({ type }) => type === "regular"
+  );
+  const psychologyStats = fighterStatsMetas.filter(
+    ({ type }) => type === "psychology"
+  );
+
+  function renderStat({ statKey, render, label }: FighterStatMeta) {
     const id = `${fighterId}-${statKey}`;
     return (
       <React.Fragment>
-        <dt aria-hidden>{render}</dt>
+        <dt aria-hidden>{render(statKey)}</dt>
         <VisuallyHidden>
           <dt id={id}>{label}</dt>
         </VisuallyHidden>
-        <dd aria-labelledby={id}>{`${fighterStats[statKey]}${
-          suffix ?? ""
-        }`}</dd>
+        <dd aria-labelledby={id}>{fighterStats[statKey]}</dd>
       </React.Fragment>
     );
   }

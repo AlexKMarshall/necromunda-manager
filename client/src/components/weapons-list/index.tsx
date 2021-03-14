@@ -55,14 +55,6 @@ export function WeaponsList({ weapons }: WeaponsListProps) {
     []
   );
 
-  function getColumnClassName(columnId: string) {
-    const textAlign = ["traits", "name"].includes(columnId)
-      ? "text-left"
-      : "text-center";
-    const border = ["rng.l", "acc.l"].includes(columnId) ? "border-none" : "";
-    return `${textAlign} ${border}`;
-  }
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -70,6 +62,14 @@ export function WeaponsList({ weapons }: WeaponsListProps) {
     rows,
     prepareRow,
   } = useTable({ columns, data });
+
+  function getColumnClassName(columnId: string) {
+    const textAlign = ["traits", "name"].includes(columnId)
+      ? "text-left"
+      : "text-center";
+    const border = ["rng.l", "acc.l"].includes(columnId) ? "border-none" : "";
+    return `${textAlign} ${border}`;
+  }
 
   return (
     <table {...getTableProps()}>

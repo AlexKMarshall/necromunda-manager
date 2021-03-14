@@ -1,9 +1,39 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
 import {
   FighterStatsDisplay,
   FighterStatsDisplayType,
 } from "../FighterStatsDisplay";
 import { SkillsWargear } from "../skills-wargear";
 import { WeaponsList, WeaponsListProps } from "../weapons-list";
+
+const cardStyles = css`
+  border-radius: var(--s2);
+`;
+
+const headerStyles = css`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  & h2 {
+    text-align: center;
+    flex-grow: 1;
+  }
+`;
+
+const creditsStyles = css`
+  --padding: var(--s-1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  aspect-ratio: 1 / 1;
+  font-weight: bold;
+
+  & * {
+    text-align: center;
+  }
+`;
 
 export interface FighterCardProps {
   id: string;
@@ -25,10 +55,10 @@ export function FighterCard({
   wargear,
 }: FighterCardProps) {
   return (
-    <section>
-      <header>
+    <section css={cardStyles} className="box">
+      <header css={headerStyles}>
         <h2>{name}</h2>
-        <div>
+        <div css={creditsStyles} className="box circle">
           <div>{credits ?? "*"}</div>
           <div>CREDITS</div>
         </div>

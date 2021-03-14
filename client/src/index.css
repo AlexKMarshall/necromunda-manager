@@ -20,6 +20,8 @@
   --primary-red: hsl(356, 81%, 27%);
   --primary-red-dark: hsl(356, 69%, 15%);
   --primary-red-transparant: hsla(356, 65%, 24%, 40%);
+  --border-thin: 1px;
+  --border-color: gray;
 }
 
 html,
@@ -27,6 +29,16 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.box {
+  --padding: var(--s1);
+  padding: var(--padding);
+  border: var(--border-thin) solid var(--border-color);
+}
+
+.circle {
+  border-radius: 50%;
 }
 
 table {

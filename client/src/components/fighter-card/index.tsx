@@ -35,6 +35,11 @@ const creditsStyles = css`
   }
 `;
 
+const scrollXContainer = css`
+  width: 100%;
+  overflow-x: auto;
+`;
+
 export interface FighterCardProps {
   id: string;
   name: string;
@@ -64,7 +69,9 @@ export function FighterCard({
         </div>
       </header>
       <FighterStatsDisplay fighterId={id} fighterStats={stats} />
-      <WeaponsList weapons={weapons} />
+      <div css={scrollXContainer}>
+        <WeaponsList weapons={weapons} />
+      </div>
       <SkillsWargear skills={skills} wargear={wargear} />
     </section>
   );

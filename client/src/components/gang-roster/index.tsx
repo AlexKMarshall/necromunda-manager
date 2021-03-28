@@ -35,6 +35,34 @@ const withSidebarStyle = css`
   }
 `;
 
+const headerStyle = css`
+  font-size: var(--s1);
+`;
+
+const dlStyle = css`
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+  & dt {
+    font-weight: 700;
+  }
+`;
+
+const stackStyle = css`
+  --space: var(--s1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  & > * {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  & > * + * {
+    margin-top: var(--space);
+  }
+`;
+
 export function GangRoster({
   name,
   house,
@@ -48,31 +76,47 @@ export function GangRoster({
   return (
     <div css={withSidebarStyle}>
       <div>
-        <div>
-          <h2>Gang Name</h2>
-          <p>{name}</p>
-          <h2>House</h2>
-          <p>{house}</p>
-          <dl>
-            <dt>Gang Rating</dt>
-            <dd>{rating}</dd>
-            <dt>Reputation</dt>
-            <dd>{reputation}</dd>
-            <dt>Wealth</dt>
-            <dd>{wealth}</dd>
+        <div css={stackStyle}>
+          <section>
+            <h2 css={headerStyle}>Gang Name</h2>
+            <p>{name}</p>
+          </section>
+          <section>
+            <h2 css={headerStyle}>House</h2>
+            <p>{house}</p>
+          </section>
+
+          <dl css={dlStyle}>
+            <div>
+              <dt>Gang Rating</dt>
+              <dd>{rating}</dd>
+            </div>
+            <div>
+              <dt>Reputation</dt>
+              <dd>{reputation}</dd>
+            </div>
+            <div>
+              <dt>Wealth</dt>
+              <dd>{wealth}</dd>
+            </div>
           </dl>
-          <h2>Territories Held</h2>
-          <ul>
-            {territories.map((territory) => (
-              <li key={territory}>{territory}</li>
-            ))}
-          </ul>
-          <h2>Stash</h2>
-          <ul>
-            {stash.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
+
+          <section>
+            <h2 css={headerStyle}>Territories Held</h2>
+            <ul>
+              {territories.map((territory) => (
+                <li key={territory}>{territory}</li>
+              ))}
+            </ul>
+          </section>
+          <section>
+            <h2 css={headerStyle}>Stash</h2>
+            <ul>
+              {stash.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
         </div>
         <div>
           <FighterList fighters={fighters} />

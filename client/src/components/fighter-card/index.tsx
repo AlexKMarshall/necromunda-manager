@@ -5,10 +5,11 @@ import {
   FighterStatsDisplayType,
 } from "../fighter-stats-display";
 import { SkillsWargear } from "../skills-wargear";
-import { WeaponsList, WeaponsListProps } from "../weapons-list";
+import { WeaponsChart, WeaponsChartProps } from "../weapons-chart";
+import { stack, box } from "../../styles";
 
 const cardStyles = css`
-  border-radius: var(--s2);
+  max-width: fit-content;
 `;
 
 const headerStyles = css`
@@ -45,7 +46,7 @@ export interface FighterCardProps {
   name: string;
   credits?: number;
   stats: FighterStatsDisplayType;
-  weapons: WeaponsListProps["weapons"];
+  weapons: WeaponsChartProps["weapons"];
   skills: string;
   wargear: string;
 }
@@ -60,17 +61,17 @@ export function FighterCard({
   wargear,
 }: FighterCardProps) {
   return (
-    <section css={cardStyles} className="box">
+    <section css={[cardStyles, box, stack]}>
       <header css={headerStyles}>
         <h2>{name}</h2>
-        <div css={creditsStyles} className="box circle">
+        <div css={[box, creditsStyles]}>
           <div>{credits ?? "*"}</div>
           <div>CREDITS</div>
         </div>
       </header>
       <FighterStatsDisplay fighterId={id} fighterStats={stats} />
       <div css={scrollXContainer}>
-        <WeaponsList weapons={weapons} />
+        <WeaponsChart weapons={weapons} />
       </div>
       <SkillsWargear skills={skills} wargear={wargear} />
     </section>

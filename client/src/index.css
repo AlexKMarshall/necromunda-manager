@@ -107,16 +107,6 @@ h3 {
   font-size: var(--s1);
 }
 
-.box {
-  --padding: var(--s1);
-  padding: var(--padding);
-  border: var(--border-thin) solid var(--border-color);
-}
-
-.circle {
-  border-radius: 50%;
-}
-
 table {
   border-collapse: collapse;
   border-spacing: unset;
@@ -133,8 +123,9 @@ table th + th {
   border-left: 1px solid;
 }
 
-tbody tr:nth-child(odd) {
-  background-color: var(--gray-300);
+tbody tr:nth-child(even) {
+  background-color: var(--gray-900);
+  color: var(--gray-100);
 }
 
 .text-left {

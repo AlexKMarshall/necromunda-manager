@@ -11,8 +11,7 @@ const dlStyle = css`
 
   & dt {
     font-weight: bold;
-    color: var(--primary-red-dark);
-    border-bottom: 1px solid var(--primary-red-dark);
+    border-bottom: 1px solid;
     & span {
       font-size: var(--s-1);
     }
@@ -24,7 +23,8 @@ const dlStyle = css`
 `;
 
 const psychologyStyle = css`
-  background-color: var(--primary-red-transparant);
+  background-color: var(--gray-900);
+  color: var(--gray-100);
 `;
 
 export type FighterStatsDisplayType = Record<keyof FighterStatsType, string>;
@@ -123,18 +123,7 @@ export function FighterStatsDisplay({
       {regularStats.map((stat) => (
         <div key={`${fighterId}-${stat.statKey}`}>{renderStat(stat)}</div>
       ))}
-      {psychologyStats.slice(0, 1).map((stat) => (
-        <div
-          key={`${fighterId}-${stat.statKey}`}
-          css={[
-            psychologyStyle,
-            { borderLeft: `2px solid var(--primary-red-dark)` },
-          ]}
-        >
-          {renderStat(stat)}
-        </div>
-      ))}
-      {psychologyStats.slice(1).map((stat) => (
+      {psychologyStats.map((stat) => (
         <div key={`${fighterId}-${stat.statKey}`} css={psychologyStyle}>
           {renderStat(stat)}
         </div>

@@ -2,14 +2,15 @@ import React from "react";
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import { WeaponsListProps, WeaponsList } from ".";
+import { WeaponsChart } from ".";
 
 export default {
   title: "WeaponsList",
-  component: WeaponsList,
+  component: WeaponsChart,
 } as Meta;
 
-const Template: Story<WeaponsListProps> = (args) => <WeaponsList {...args} />;
+type WeaponsChartProps = React.ComponentPropsWithoutRef<typeof WeaponsChart>;
+const Template: Story<WeaponsChartProps> = (args) => <WeaponsChart {...args} />;
 
 export const Basic = Template.bind({});
 Basic.args = {

@@ -1,6 +1,8 @@
+/** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
 import { useTable } from "react-table";
 import { FighterSummary } from "../../types/fighter";
+import { box } from "../../styles";
 
 interface FighterListProps {
   fighters: FighterSummary[];
@@ -13,9 +15,9 @@ export function FighterList({ fighters }: FighterListProps) {
       { Header: "Fighter Name", accessor: "name" as const },
       { Header: "Type", accessor: "fighterPrototype" as const },
       { Header: "Cost", accessor: "cost" as const },
-      { Header: "Experience", accessor: "xp" as const },
-      { Header: "Advancements", accessor: "advancements" as const },
-      { Header: "Recovery", accessor: "recovery" as const },
+      { Header: "Xp", accessor: "xp" as const },
+      { Header: "Adv", accessor: "advancements" as const },
+      { Header: "Rec", accessor: "recovery" as const },
       { Header: "Captured By", accessor: "capturedBy" as const },
       { Header: "Lasting Injuries", accessor: "lastingInjuries" as const },
     ],
@@ -31,7 +33,7 @@ export function FighterList({ fighters }: FighterListProps) {
   } = useTable({ columns, data });
 
   return (
-    <table {...getTableProps()} style={{ width: "100%" }}>
+    <table {...getTableProps()} css={box} style={{ width: "100%" }}>
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>

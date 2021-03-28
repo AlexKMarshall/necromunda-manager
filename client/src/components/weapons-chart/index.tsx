@@ -17,11 +17,11 @@ export interface WeaponStatsDisplay {
   traits: string;
 }
 
-export interface WeaponsListProps {
+export interface WeaponsChartProps {
   weapons: { name: string; stats: WeaponStatsDisplay }[];
 }
 
-export function WeaponsList({ weapons }: WeaponsListProps) {
+export function WeaponsChart({ weapons }: WeaponsChartProps) {
   const data = useMemo(
     () => weapons.map(({ name, stats }) => ({ name, ...stats })),
     [weapons]

@@ -8,7 +8,6 @@ const dlStyle = css`
 
   & dt {
     font-weight: bold;
-    color: var(--primary-red-dark);
   }
 `;
 

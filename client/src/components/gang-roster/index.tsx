@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { FighterSummary } from "../../types/fighter";
 import { FighterList } from "../fighter-list";
+import { stack, box } from "../../styles";
 
 interface GangRosterProps {
   name: string;
@@ -15,23 +16,23 @@ interface GangRosterProps {
 }
 
 const withSidebarStyle = css`
+  --gutter: var(--s1);
   overflow: hidden;
 
   & > * {
     display: flex;
     flex-wrap: wrap;
-    margin: calc(var(--s1) / 2 * -1);
+    margin: calc(var(--gutter) / 2 * -1);
   }
 
   & > * > * {
-    margin: calc(var(--s1) / 2);
+    margin: calc(var(--gutter) / 2);
     flex-grow: 1;
   }
 
   & > * > :last-child {
     flex-basis: 0;
     flex-grow: 999;
-    /* min-width: calc(50% - var(--s1)); */
   }
 `;
 
@@ -42,24 +43,9 @@ const headerStyle = css`
 const dlStyle = css`
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s1);
+  gap: var(--s0);
   & dt {
     font-weight: 700;
-  }
-`;
-
-const stackStyle = css`
-  --space: var(--s1);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-
-  & > * {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  & > * + * {
-    margin-top: var(--space);
   }
 `;
 
@@ -74,9 +60,9 @@ export function GangRoster({
   fighters,
 }: GangRosterProps) {
   return (
-    <div css={withSidebarStyle}>
+    <div css={[withSidebarStyle, box]}>
       <div>
-        <div css={stackStyle}>
+        <div css={stack}>
           <section>
             <h2 css={headerStyle}>Gang Name</h2>
             <p>{name}</p>

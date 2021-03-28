@@ -66,7 +66,7 @@ select {
 }
 
 :root {
-  --ratio: 1.5;
+  --ratio: 1.25;
   --s-5: calc(var(--s-4) / var(--ratio));
   --s-4: calc(var(--s-3) / var(--ratio));
   --s-3: calc(var(--s-2) / var(--ratio));
@@ -104,6 +104,17 @@ h2 {
 }
 
 h3 {
+  font-size: var(--s1);
+}
+
+input,
+select,
+textarea {
+  padding: var(--s-2);
+}
+
+label {
+  font-weight: 700;
   font-size: var(--s1);
 }
 

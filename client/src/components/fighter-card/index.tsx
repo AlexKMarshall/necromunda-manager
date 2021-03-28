@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import {
   FighterStatsDisplay,
   FighterStatsDisplayType,
-} from "../FighterStatsDisplay";
+} from "../fighter-stats-display";
 import { SkillsWargear } from "../skills-wargear";
 import { WeaponsList, WeaponsListProps } from "../weapons-list";
 

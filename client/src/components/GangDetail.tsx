@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useReadGangDetail } from "../hooks/gangs";
 import { FighterStats as FighterStatsType } from "../schemas/fighter.schema";
-import { FighterStats } from "./FighterStatsDisplay";
+import { FighterStats } from "./fighter-stats-display";
 
 type GangDetailParams = {
   gangId: string;

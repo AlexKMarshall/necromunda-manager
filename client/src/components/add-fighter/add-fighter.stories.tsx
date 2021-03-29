@@ -15,6 +15,7 @@ const Template: Story<AddFighterProps> = (args) => <AddFighter {...args} />;
 
 export const Basic = Template.bind({});
 Basic.args = {
+  onSubmit: (data) => console.log(data),
   fighterPrototypes: [
     {
       id: "1",

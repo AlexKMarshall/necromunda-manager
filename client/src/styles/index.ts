@@ -25,7 +25,7 @@ export const stackSmall = css`
     margin-bottom: 0;
   }
   & > * + * {
-    margin-top: var(--s0);
+    margin-top: var(--s-1);
   }
 `;
 

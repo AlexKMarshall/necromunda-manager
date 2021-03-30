@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTable } from "react-table";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, FieldError } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { createFighterPrototypeDtoSchema } from "../../../schemas/fighter-prototype.schema";
@@ -12,6 +13,16 @@ import {
 import { useReadFactions } from "../../../hooks/factions";
 import { box, stack, stackSmall, cluster } from "../../../styles";
 import { useReadFighterClasses } from "../../../hooks/fighter-classes";
+
+const uniqueIdFactory = () => {
+  let num = 0;
+  return (prefix = "") => {
+    num += 1;
+    return `${prefix}_${num}`;
+  };
+};
+
+const generateId = uniqueIdFactory();
 
 const addFighterPrototypeFormSchema = z.object({
   name: createFighterPrototypeDtoSchema.shape.name.nonempty({
@@ -141,11 +152,13 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         </table>
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
-        <div css={stackSmall}>
-          <label htmlFor="name">Name:</label>
-          <input type="text" id="name" name="name" ref={register} />
-          {errors.name ? <span role="alert">{errors.name.message}</span> : null}
-        </div>
+        <FormInput
+          name="name"
+          errors={errors}
+          label="Name:"
+          register={register}
+          type="text"
+        />
         <div css={stackSmall}>
           <label htmlFor="cost">Cost:</label>
           <Controller
@@ -160,7 +173,12 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
               />
             )}
           />
-          {errors.cost ? <span role="alert">{errors.cost.message}</span> : null}
+          <ErrorMessage
+            errors={errors}
+            name="cost"
+            render={({ message }) => <span role="alert">{message}</span>}
+          />
+          {/* {errors.cost ? <span role="alert">{errors.cost.message}</span> : null} */}
         </div>
         <div css={stackSmall}>
           <label htmlFor="factionId">Faction:</label>
@@ -412,6 +430,31 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
           </div>
         </div>
       </form>
+    </div>
+  );
+}
+
+interface FormInputProps<TName extends string>
+  extends React.ComponentPropsWithoutRef<"input"> {
+  name: TName;
+  register: any;
+  errors: Partial<Record<TName, FieldError>>;
+  label: string;
+}
+
+function FormInput<TName extends string>({
+  name,
+  register,
+  errors,
+  label,
+  ...rest
+}: FormInputProps<TName>) {
+  const id = generateId();
+  return (
+    <div css={stackSmall}>
+      <label htmlFor={id}>{label}</label>
+      <input id={id} name={name} ref={register} {...rest} />
+      {errors[name] ? <span role="alert">{errors[name]?.message}</span> : null}
     </div>
   );
 }

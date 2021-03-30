@@ -72,8 +72,8 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
           cost,
           faction: { name: factionName },
           fighterClass: { name: fighterClassName },
-          fighterStats: { movement },
-        }) => ({ name, cost, factionName, fighterClassName, movement })
+          fighterStats,
+        }) => ({ name, cost, factionName, fighterClassName, ...fighterStats })
       ),
     [fighterPrototypes]
   );
@@ -85,6 +85,17 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
       { Header: "Faction", accessor: "factionName" as const },
       { Header: "Fighter Class", accessor: "fighterClassName" as const },
       { Header: "M", accessor: "movement" as const },
+      { Header: "WS", accessor: "weaponSkill" as const },
+      { Header: "BS", accessor: "ballisticSkill" as const },
+      { Header: "S", accessor: "strength" as const },
+      { Header: "T", accessor: "toughness" as const },
+      { Header: "W", accessor: "wounds" as const },
+      { Header: "I", accessor: "initiative" as const },
+      { Header: "A", accessor: "attacks" as const },
+      { Header: "Ld", accessor: "leadership" as const },
+      { Header: "Cl", accessor: "cool" as const },
+      { Header: "Wil", accessor: "will" as const },
+      { Header: "Int", accessor: "intelligence" as const },
     ],
     []
   );
@@ -195,7 +206,206 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
             <span role="alert">{errors.fighterStats.movement.message}</span>
           ) : null}
         </div>
-
+        <div css={stackSmall}>
+          <label htmlFor="weaponSkill">Weapon Skill:</label>
+          <Controller
+            name="fighterStats.weaponSkill"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="weaponSkill"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.weaponSkill ? (
+            <span role="alert">{errors.fighterStats.weaponSkill.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="ballisticSkill">Ballistic Skill:</label>
+          <Controller
+            name="fighterStats.ballisticSkill"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="ballisticSkill"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.ballisticSkill ? (
+            <span role="alert">
+              {errors.fighterStats.ballisticSkill.message}
+            </span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="strength">Strength:</label>
+          <Controller
+            name="fighterStats.strength"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="strength"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.strength ? (
+            <span role="alert">{errors.fighterStats.strength.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="toughness">Toughness:</label>
+          <Controller
+            name="fighterStats.toughness"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="toughness"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.toughness ? (
+            <span role="alert">{errors.fighterStats.toughness.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="wounds">Wounds:</label>
+          <Controller
+            name="fighterStats.wounds"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="wounds"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.wounds ? (
+            <span role="alert">{errors.fighterStats.wounds.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="initiative">Initiative:</label>
+          <Controller
+            name="fighterStats.initiative"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="initiative"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.initiative ? (
+            <span role="alert">{errors.fighterStats.initiative.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="attacks">Attacks:</label>
+          <Controller
+            name="fighterStats.attacks"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="attacks"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.attacks ? (
+            <span role="alert">{errors.fighterStats.attacks.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="leadership">Leadership:</label>
+          <Controller
+            name="fighterStats.leadership"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="leadership"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.leadership ? (
+            <span role="alert">{errors.fighterStats.leadership.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="cool">Cool:</label>
+          <Controller
+            name="fighterStats.cool"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="cool"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.cool ? (
+            <span role="alert">{errors.fighterStats.cool.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="will">Will:</label>
+          <Controller
+            name="fighterStats.will"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="will"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.will ? (
+            <span role="alert">{errors.fighterStats.will.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="intelligence">Intelligence:</label>
+          <Controller
+            name="fighterStats.intelligence"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="intelligence"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.intelligence ? (
+            <span role="alert">{errors.fighterStats.intelligence.message}</span>
+          ) : null}
+        </div>
         <div css={cluster}>
           <div>
             <button type="submit">Add Fighter Class</button>

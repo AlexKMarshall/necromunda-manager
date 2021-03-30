@@ -5,6 +5,7 @@ import {
   QueryClient,
   UseMutationOptions,
 } from "react-query";
+import faker from "faker";
 import { QUERY_KEYS } from "../constants/query-keys";
 import {
   Faction,
@@ -15,6 +16,11 @@ import { createTempId, sortByField } from "../utils";
 import { useAuthClient } from "./client";
 
 const endpoint = "factions";
+
+export const defaultFaction: Faction = {
+  id: faker.random.uuid(),
+  name: "Loading...",
+};
 
 export function useReadFactions() {
   const client = useAuthClient();

@@ -2,9 +2,11 @@
 import { rest } from "msw";
 import { CreateFactionDto } from "../schemas/faction.schema";
 import { CreateFighterClassDto } from "../schemas/fighter-class.schema";
+import { CreateFighterPrototypeDto } from "../schemas/fighter-prototype.schema";
 import { fighterPrototypes, gang, gangDetail } from "./data";
 import * as factionsDb from "./db/factions";
 import * as fighterClassesDb from "./db/fighter-classes";
+import * as fighterPrototypesDb from "./db/fighter-prototypes";
 
 const apiUrl = "http://localhost:8000";
 
@@ -38,9 +40,22 @@ export const handlers = [
       }
     }
   ),
-  rest.get("http://localhost:8000/fighter-prototypes", (req, res, ctx) => {
+  rest.get(`${apiUrl}/fighter-prototypes`, async (req, res, ctx) => {
+    const fighterPrototypes = await fighterPrototypesDb.readAll();
     return res(ctx.json(fighterPrototypes));
   }),
+  rest.post<CreateFighterPrototypeDto>(
+    `${apiUrl}/fighter-prototypes`,
+    async (req, res, ctx) => {
+      const fp = req.body;
+      try {
+        const fighterPrototype = await fighterPrototypesDb.create(fp);
+        return res(ctx.status(201), ctx.json(fighterPrototype));
+      } catch (e) {
+        return res(ctx.status(e.status), ctx.json(e.message));
+      }
+    }
+  ),
   rest.get("http://localhost:8000/gangs", (req, res, ctx) => {
     return res(ctx.json([gang]));
   }),

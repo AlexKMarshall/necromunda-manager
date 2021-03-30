@@ -7,6 +7,8 @@ import {
 } from "../schemas/fighter-prototype.schema";
 import { useAuthClient } from "./client";
 import { createTempId, sortByField } from "../utils";
+import { defaultFaction, useReadFactions } from "./factions";
+import { defaultFighterClass, useReadFighterClasses } from "./fighter-classes";
 
 export function useReadFighterPrototypes() {
   const client = useAuthClient();
@@ -33,12 +35,14 @@ export function useReadFighterPrototypes() {
 export function useCreateFighterPrototype() {
   const client = useAuthClient();
   const queryClient = useQueryClient();
+  const { factions } = useReadFactions();
+  const { fighterClasses } = useReadFighterClasses();
 
   const query = (fighterPrototype: CreateFighterPrototypeDto) =>
     client("fighter-prototypes", fighterPrototype);
 
   const mutationResult = useMutation(query, {
-    onMutate: async (fighterPrototype) => {
+    onMutate: async ({ name, cost, factionId, fighterClassId }) => {
       await queryClient.cancelQueries(QUERY_KEYS.fighterPrototypes);
 
       const previousFighterPrototypes =
@@ -46,12 +50,21 @@ export function useCreateFighterPrototype() {
           QUERY_KEYS.fighterPrototypes
         ) ?? [];
 
+      const faction =
+        factions.find((faction) => faction.id === factionId) ?? defaultFaction;
+      const fighterClass =
+        fighterClasses.find((fc) => fc.id === fighterClassId) ??
+        defaultFighterClass;
+
       queryClient.setQueryData<FighterPrototype[]>(
         QUERY_KEYS.fighterPrototypes,
         (old) => {
           const oldFighterPrototypes = old ?? [];
           const newFighterPrototype = {
-            ...fighterPrototype,
+            name,
+            cost,
+            faction,
+            fighterClass,
             id: createTempId(),
           };
           return [...oldFighterPrototypes, newFighterPrototype].sort(

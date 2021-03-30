@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import faker from "faker";
 import { QUERY_KEYS } from "../constants/query-keys";
 import { useAuthClient } from "./client";
 import {
@@ -7,6 +8,11 @@ import {
   fighterClassSchema,
 } from "../schemas/fighter-class.schema";
 import { createTempId, sortByField } from "../utils";
+
+export const defaultFighterClass: FighterClass = {
+  id: faker.random.uuid(),
+  name: "Loading...",
+};
 
 export function useReadFighterClasses() {
   const client = useAuthClient();

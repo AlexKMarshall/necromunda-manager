@@ -12,9 +12,12 @@ export const fighterPrototypeSchema = z.object({
 
 export type FighterPrototype = z.infer<typeof fighterPrototypeSchema>;
 
-export const createFighterPrototypeDtoSchema = fighterPrototypeSchema.omit({
-  id: true,
-});
+export const createFighterPrototypeDtoSchema = fighterPrototypeSchema
+  .omit({ id: true, faction: true, fighterClass: true })
+  .extend({
+    factionId: factionSchema.shape.id,
+    fighterClassId: fighterClassSchema.shape.id,
+  });
 export type CreateFighterPrototypeDto = z.infer<
   typeof createFighterPrototypeDtoSchema
 >;

@@ -1,6 +1,7 @@
+import faker from "faker";
+
 export function createTempId() {
-  const randomNumber = Math.ceil(Math.random() * 1000);
-  return `TEMP-${randomNumber}`;
+  return `TEMP-${faker.random.uuid()}`;
 }
 
 export function sortByField<T, K extends keyof T>(fieldName: K) {

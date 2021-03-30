@@ -134,7 +134,7 @@ table th + th {
   border-left: 1px solid;
 }
 
-tbody tr:nth-child(even) {
+tbody tr:nth-child(odd) {
   background-color: var(--gray-900);
   color: var(--gray-100);
 }

@@ -1,7 +1,6 @@
 import { Auth0Provider } from "@auth0/auth0-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { PropsWithChildren } from "react";
-import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
 
 function AuthProvider({ children }: PropsWithChildren<{}>) {
@@ -28,9 +27,7 @@ export default function AppProviders({ children }: PropsWithChildren<{}>) {
   return (
     <AuthProvider>
       <ReactQueryProvider>
-        <ChakraProvider>
-          <BrowserRouter>{children}</BrowserRouter>
-        </ChakraProvider>
+        <BrowserRouter>{children}</BrowserRouter>
       </ReactQueryProvider>
     </AuthProvider>
   );

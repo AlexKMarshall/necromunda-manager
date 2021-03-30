@@ -13,6 +13,7 @@ import {
 import { useReadFactions } from "../../../hooks/factions";
 import { box, stack, stackSmall, cluster } from "../../../styles";
 import { useReadFighterClasses } from "../../../hooks/fighter-classes";
+import { render } from "@testing-library/react";
 
 const uniqueIdFactory = () => {
   let num = 0;
@@ -152,12 +153,12 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         </table>
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
-        <FormInput
+        <FormControl
           name="name"
           errors={errors}
           label="Name:"
           register={register}
-          type="text"
+          renderControl={(props) => <input type="text" {...props} />}
         />
         <div css={stackSmall}>
           <label htmlFor="cost">Cost:</label>
@@ -180,32 +181,36 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
           />
           {/* {errors.cost ? <span role="alert">{errors.cost.message}</span> : null} */}
         </div>
-        <div css={stackSmall}>
-          <label htmlFor="factionId">Faction:</label>
-          <select id="factionId" name="factionId" ref={register}>
-            {factions.map((faction) => (
-              <option key={faction.id} value={faction.id}>
-                {faction.name}
-              </option>
-            ))}
-          </select>
-          {errors.factionId ? (
-            <span role="alert">{errors.factionId.message}</span>
-          ) : null}
-        </div>
-        <div css={stackSmall}>
-          <label htmlFor="fighterClassId">Fighter Class:</label>
-          <select id="fighterClassId" name="fighterClassId" ref={register}>
-            {fighterClasses.map((fc) => (
-              <option key={fc.id} value={fc.id}>
-                {fc.name}
-              </option>
-            ))}
-          </select>
-          {errors.fighterClassId ? (
-            <span role="alert">{errors.fighterClassId.message}</span>
-          ) : null}
-        </div>
+        <FormControl
+          name="factionId"
+          errors={errors}
+          label="Faction:"
+          register={register}
+          renderControl={(props) => (
+            <select {...props}>
+              {factions.map((faction) => (
+                <option key={faction.id} value={faction.id}>
+                  {faction.name}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        <FormControl
+          name="fighterClassId"
+          errors={errors}
+          label="Fighter Class:"
+          register={register}
+          renderControl={(props) => (
+            <select {...props}>
+              {factions.map((faction) => (
+                <option key={faction.id} value={faction.id}>
+                  {faction.name}
+                </option>
+              ))}
+            </select>
+          )}
+        />
         <div css={stackSmall}>
           <label htmlFor="movement">Movement:</label>
           <Controller
@@ -440,20 +445,27 @@ interface FormInputProps<TName extends string>
   register: any;
   errors: Partial<Record<TName, FieldError>>;
   label: string;
+  renderControl: (controlProps: RenderControlProps<TName>) => JSX.Element;
 }
 
-function FormInput<TName extends string>({
+interface RenderControlProps<TName> {
+  ref: any;
+  name: TName;
+  id: string;
+}
+
+function FormControl<TName extends string>({
   name,
   register,
   errors,
   label,
-  ...rest
+  renderControl,
 }: FormInputProps<TName>) {
   const id = generateId();
   return (
     <div css={stackSmall}>
       <label htmlFor={id}>{label}</label>
-      <input id={id} name={name} ref={register} {...rest} />
+      {renderControl({ ref: register, name, id })}
       {errors[name] ? <span role="alert">{errors[name]?.message}</span> : null}
     </div>
   );

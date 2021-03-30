@@ -1,7 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import React, { useMemo } from "react";
 import { useTable } from "react-table";
-import { Controller, useForm, FieldError } from "react-hook-form";
+import {
+  Controller,
+  useForm,
+  FieldError,
+  UseFormMethods,
+  FieldName,
+  FieldValues,
+} from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -439,34 +446,34 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
   );
 }
 
-interface FormInputProps<TName extends string>
-  extends React.ComponentPropsWithoutRef<"input"> {
-  name: TName;
-  register: any;
-  errors: Partial<Record<TName, FieldError>>;
+type FormControlProps<TFieldValues extends FieldValues = FieldValues> = Pick<
+  UseFormMethods<TFieldValues>,
+  "register" | "errors"
+> & {
+  name: FieldName<TFieldValues>;
   label: string;
-  renderControl: (controlProps: RenderControlProps<TName>) => JSX.Element;
-}
+  renderControl: (props: RenderControlProps) => JSX.Element;
+};
 
-interface RenderControlProps<TName> {
-  ref: any;
-  name: TName;
+type RenderControlProps = {
+  ref: FormControlProps["register"];
   id: string;
-}
+  name: FormControlProps["name"];
+};
 
-function FormControl<TName extends string>({
-  name,
+function FormControl({
   register,
   errors,
+  name,
   label,
   renderControl,
-}: FormInputProps<TName>) {
+}: FormControlProps) {
   const id = generateId();
   return (
     <div css={stackSmall}>
       <label htmlFor={id}>{label}</label>
       {renderControl({ ref: register, name, id })}
-      {errors[name] ? <span role="alert">{errors[name]?.message}</span> : null}
+      {errors[name] ? <span role="alert">{errors[name].message}</span> : null}
     </div>
   );
 }

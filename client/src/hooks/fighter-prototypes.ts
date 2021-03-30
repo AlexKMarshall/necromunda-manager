@@ -42,7 +42,13 @@ export function useCreateFighterPrototype() {
     client("fighter-prototypes", fighterPrototype);
 
   const mutationResult = useMutation(query, {
-    onMutate: async ({ name, cost, factionId, fighterClassId }) => {
+    onMutate: async ({
+      name,
+      cost,
+      factionId,
+      fighterClassId,
+      fighterStats,
+    }) => {
       await queryClient.cancelQueries(QUERY_KEYS.fighterPrototypes);
 
       const previousFighterPrototypes =
@@ -65,6 +71,7 @@ export function useCreateFighterPrototype() {
             cost,
             faction,
             fighterClass,
+            fighterStats,
             id: createTempId(),
           };
           return [...oldFighterPrototypes, newFighterPrototype].sort(

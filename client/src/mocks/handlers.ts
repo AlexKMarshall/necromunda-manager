@@ -3,7 +3,6 @@ import { rest } from "msw";
 import { CreateFactionDto } from "../schemas/faction.schema";
 import { CreateFighterClassDto } from "../schemas/fighter-class.schema";
 import { CreateFighterPrototypeDto } from "../schemas/fighter-prototype.schema";
-import { fighterPrototypes, gang, gangDetail } from "./data";
 import * as factionsDb from "./db/factions";
 import * as fighterClassesDb from "./db/fighter-classes";
 import * as fighterPrototypesDb from "./db/fighter-prototypes";
@@ -56,10 +55,4 @@ export const handlers = [
       }
     }
   ),
-  rest.get("http://localhost:8000/gangs", (req, res, ctx) => {
-    return res(ctx.json([gang]));
-  }),
-  rest.get(`http://localhost:8000/gangs/:id`, (req, res, ctx) => {
-    return res(ctx.json(gangDetail));
-  }),
 ];

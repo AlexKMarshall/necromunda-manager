@@ -26,6 +26,7 @@ const addFighterPrototypeFormSchema = z.object({
   fighterClassId: createFighterPrototypeDtoSchema.shape.fighterClassId.nonempty(
     { message: "Required" }
   ),
+  fighterStats: createFighterPrototypeDtoSchema.shape.fighterStats,
 });
 type AddFighterClassForm = z.infer<typeof addFighterPrototypeFormSchema>;
 
@@ -45,7 +46,15 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
   const { register, handleSubmit, errors, reset, control } = useForm<
     AddFighterClassForm
   >({
-    defaultValues: { name: "", cost: 0, fighterClassId: "", factionId: "" },
+    defaultValues: {
+      name: "",
+      cost: 0,
+      fighterClassId: "",
+      factionId: "",
+      fighterStats: {
+        movement: 0,
+      },
+    },
     resolver: zodResolver(addFighterPrototypeFormSchema),
   });
   const { postFighterPrototype } = useCreateFighterPrototype();
@@ -63,7 +72,8 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
           cost,
           faction: { name: factionName },
           fighterClass: { name: fighterClassName },
-        }) => ({ name, cost, factionName, fighterClassName })
+          fighterStats: { movement },
+        }) => ({ name, cost, factionName, fighterClassName, movement })
       ),
     [fighterPrototypes]
   );
@@ -74,6 +84,7 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
       { Header: "Cost", accessor: "cost" as const },
       { Header: "Faction", accessor: "factionName" as const },
       { Header: "Fighter Class", accessor: "fighterClassName" as const },
+      { Header: "M", accessor: "movement" as const },
     ],
     []
   );
@@ -164,6 +175,24 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
           </select>
           {errors.fighterClassId ? (
             <span role="alert">{errors.fighterClassId.message}</span>
+          ) : null}
+        </div>
+        <div css={stackSmall}>
+          <label htmlFor="movement">Movement:</label>
+          <Controller
+            name="fighterStats.movement"
+            control={control}
+            render={({ value, onChange }) => (
+              <input
+                type="number"
+                id="movement"
+                value={value}
+                onChange={(e) => onChange(parseInt(e.target.value, 10))}
+              />
+            )}
+          />
+          {errors.fighterStats?.movement ? (
+            <span role="alert">{errors.fighterStats.movement.message}</span>
           ) : null}
         </div>
 

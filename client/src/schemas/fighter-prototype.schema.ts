@@ -8,6 +8,9 @@ export const fighterPrototypeSchema = z.object({
   faction: factionSchema,
   fighterClass: fighterClassSchema,
   cost: z.number(),
+  fighterStats: z.object({
+    movement: z.number(),
+  }),
 });
 
 export type FighterPrototype = z.infer<typeof fighterPrototypeSchema>;

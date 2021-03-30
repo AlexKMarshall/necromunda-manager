@@ -36,6 +36,7 @@ async function create({
   cost,
   factionId,
   fighterClassId,
+  fighterStats,
 }: CreateFighterPrototypeDto) {
   const faction = await factionsDb.read(factionId);
   const fighterClass = await fighterClassesDb.read(fighterClassId);
@@ -48,7 +49,14 @@ async function create({
   }
 
   const id = faker.random.uuid();
-  fighterPrototypesStore[id] = { id, name, faction, fighterClass, cost };
+  fighterPrototypesStore[id] = {
+    id,
+    name,
+    faction,
+    fighterClass,
+    cost,
+    fighterStats,
+  };
   persist();
   return read(id);
 }

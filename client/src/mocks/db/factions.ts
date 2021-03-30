@@ -1,4 +1,5 @@
 import faker from "faker";
+import { HttpError } from "./utils";
 import { Faction, CreateFactionDto } from "../../schemas/faction.schema";
 
 const factionsKey = "__necromunda_factions__";
@@ -19,23 +20,13 @@ function load() {
 try {
   load();
 } catch (e) {
-  console.error(e);
   persist();
 }
 
-class HttpError extends Error {
-  status: number;
-  constructor(message: string, status: number) {
-    super(message);
-    this.status = status;
-  }
-}
-
 async function create({ name }: CreateFactionDto) {
-  console.log("creating faction ", name);
-  const factions = Object.values(factionsStore);
+  const factions = await readAll();
   if (factions.some((faction) => faction.name === name)) {
-    throw new HttpError("Faction name already exists", 400);
+    throw new HttpError(`Faction name "${name} already exists`, 400);
   }
 
   const id = faker.random.uuid();

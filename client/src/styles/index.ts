@@ -36,6 +36,7 @@ export const box = css`
 `;
 
 export const cluster = css`
+  --align-items: center;
   --cluster-gap: var(--s0);
   overflow: hidden;
 
@@ -43,7 +44,7 @@ export const cluster = css`
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: var(--align-items);
     margin: calc(var(--cluster-gap) / 2 * -1);
   }
 

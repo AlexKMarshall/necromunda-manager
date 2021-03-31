@@ -12,6 +12,8 @@ interface StandardFormControlProps {
 interface RenderControlElementProps {
   id: string;
   name: string;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
 }
 
 export function StandardFormControl({
@@ -21,11 +23,23 @@ export function StandardFormControl({
   error,
 }: StandardFormControlProps) {
   const id = faker.random.uuid();
+  const errorId = faker.random.uuid();
+  const invalid = Boolean(error);
+  const describedBy = invalid ? errorId : undefined;
   return (
     <div css={stackSmall}>
       <label htmlFor={id}>{label}</label>
-      {renderControlElement({ id, name })}
-      {error ? <span role="alert">{error.message}</span> : null}
+      {renderControlElement({
+        id,
+        name,
+        "aria-invalid": invalid,
+        "aria-describedby": describedBy,
+      })}
+      {invalid ? (
+        <span role="alert" id={errorId}>
+          {error?.message}
+        </span>
+      ) : null}
     </div>
   );
 }

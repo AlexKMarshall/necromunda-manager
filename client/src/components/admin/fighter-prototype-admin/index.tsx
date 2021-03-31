@@ -1,14 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useMemo } from "react";
 import { useTable } from "react-table";
-import {
-  Controller,
-  useForm,
-  FieldError,
-  UseFormMethods,
-  FieldName,
-  FieldValues,
-} from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -20,7 +13,7 @@ import {
 import { useReadFactions } from "../../../hooks/factions";
 import { box, stack, stackSmall, cluster } from "../../../styles";
 import { useReadFighterClasses } from "../../../hooks/fighter-classes";
-import { render } from "@testing-library/react";
+import { StandardFormControl } from "../../form";
 
 const uniqueIdFactory = () => {
   let num = 0;
@@ -57,11 +50,8 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     error,
     fighterPrototypes,
   } = useReadFighterPrototypes();
-  const { isLoading: areFactionsLoading, factions } = useReadFactions();
-  const {
-    isLoading: areFighterClassesLoading,
-    fighterClasses,
-  } = useReadFighterClasses();
+  const { factions } = useReadFactions();
+  const { fighterClasses } = useReadFighterClasses();
   const { register, handleSubmit, errors, reset, control } = useForm<
     AddFighterClassForm
   >({
@@ -183,6 +173,29 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     data,
   });
 
+  function renderFormControl({
+    name,
+    label,
+    renderControlElement,
+  }: {
+    name: string;
+    label: string;
+    renderControlElement: (props: { id: string }) => React.ReactNode;
+  }) {
+    const id = generateId();
+    return (
+      <div css={stackSmall}>
+        <label htmlFor={id}>{label}</label>
+        {renderControlElement({ id })}
+        <ErrorMessage
+          errors={errors}
+          name={name}
+          render={({ message }) => <span role="alert">{message}</span>}
+        />
+      </div>
+    );
+  }
+
   function renderNumericInput({
     name,
     label,
@@ -190,10 +203,10 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     name: string;
     label: string;
   }) {
-    const id = generateId();
-    return (
-      <div css={stackSmall}>
-        <label htmlFor={id}>{label}</label>
+    return renderFormControl({
+      name,
+      label,
+      renderControlElement: ({ id }) => (
         <Controller
           name={name}
           control={control}
@@ -206,28 +219,8 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
             />
           )}
         />
-        <ErrorMessage
-          errors={errors}
-          name={name}
-          render={({ message }) => <span role="alert">{message}</span>}
-        />
-      </div>
-    );
-  }
-
-  function renderTextInput({ name, label }: { name: string; label: string }) {
-    const id = generateId();
-    return (
-      <div css={stackSmall}>
-        <label htmlFor={id}>{label}</label>
-        <input type="text" name={name} id={id} ref={register} />
-        <ErrorMessage
-          errors={errors}
-          name={name}
-          render={({ message }) => <span role="alert">{message}</span>}
-        />
-      </div>
-    );
+      ),
+    });
   }
 
   function renderSelectInput({
@@ -239,21 +232,17 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     label: string;
     options: React.ReactNode;
   }) {
-    const id = generateId();
-    return (
-      <div css={stackSmall}>
-        <label htmlFor={id}>{label}</label>
+    return renderFormControl({
+      name,
+      label,
+      renderControlElement: ({ id }) => (
         <select name={name} id={id} ref={register}>
           {options}
         </select>
-        <ErrorMessage
-          errors={errors}
-          name={name}
-          render={({ message }) => <span role="alert">{message}</span>}
-        />
-      </div>
-    );
+      ),
+    });
   }
+
   return (
     <div css={stack}>
       <h2>Fighter Prototypes</h2>
@@ -289,10 +278,14 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         </table>
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
-        {renderTextInput({
-          name: "name",
-          label: "Name:",
-        })}
+        <StandardFormControl
+          name="name"
+          label="Name:"
+          renderControlElement={(props) => (
+            <input {...props} type="text" ref={register} />
+          )}
+          error={errors.name}
+        />
         {renderNumericInput({
           name: "cost",
           label: "Cost:",
@@ -309,7 +302,7 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         {renderSelectInput({
           name: "fighterClassId",
           label: "Fighter Class:",
-          options: factions.map((faction) => (
+          options: fighterClasses.map((faction) => (
             <option key={faction.id} value={faction.id}>
               {faction.name}
             </option>

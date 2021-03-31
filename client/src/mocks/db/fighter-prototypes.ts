@@ -66,11 +66,11 @@ async function readAll() {
 }
 
 async function read(id: FighterPrototype["id"]) {
-  validateFaction(id);
+  validateFighterPrototype(id);
   return fighterPrototypesStore[id];
 }
 
-function validateFaction(id: FighterPrototype["id"]) {
+function validateFighterPrototype(id: FighterPrototype["id"]) {
   load();
   if (!fighterPrototypesStore[id]) {
     throw new HttpError(`No Fighter Prototype with the id "${id}"`, 404);

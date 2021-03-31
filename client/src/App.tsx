@@ -6,6 +6,7 @@ import {
   FighterClassAdmin,
   FighterPrototypeAdmin,
 } from "./components/admin";
+import { GangList } from "./components/gang-list";
 import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
 import { cluster } from "./styles";
@@ -43,7 +44,7 @@ function AuthenticatedApp() {
           </div>
         </Route>
         <Route path="/gangs" exact>
-          {/* <Gangs /> */}
+          <GangList />
         </Route>
       </Switch>
     </>

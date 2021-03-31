@@ -46,11 +46,11 @@ async function readAll() {
 }
 
 async function read(id: FighterClass["id"]) {
-  validateFaction(id);
+  validateFighterClass(id);
   return fighterClassesStore[id];
 }
 
-function validateFaction(id: FighterClass["id"]) {
+function validateFighterClass(id: FighterClass["id"]) {
   load();
   if (!fighterClassesStore[id]) {
     throw new HttpError(`No Fighter Class with the id "${id}"`, 404);

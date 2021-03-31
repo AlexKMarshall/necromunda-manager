@@ -6,15 +6,17 @@ export const gangSchema = z.object({
   name: z.string(),
   id: z.string(),
   faction: factionSchema,
-  userId: z.string(),
+  userId: z.string().optional(),
 });
 
 export type Gang = z.infer<typeof gangSchema>;
 
-export const createGangDtoSchema = gangSchema.omit({
-  id: true,
-  userId: true,
-});
+export const createGangDtoSchema = gangSchema
+  .pick({
+    name: true,
+  })
+  .extend({ factionId: gangSchema.shape.faction.shape.id });
+
 export type CreateGangDto = z.infer<typeof createGangDtoSchema>;
 
 export const gangDetailSchema = gangSchema.extend({

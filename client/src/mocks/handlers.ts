@@ -1,11 +1,15 @@
 // src/mocks/handlers.js
 import { rest } from "msw";
-import { CreateFactionDto } from "../schemas/faction.schema";
-import { CreateFighterClassDto } from "../schemas/fighter-class.schema";
-import { CreateFighterPrototypeDto } from "../schemas/fighter-prototype.schema";
+import {
+  CreateFactionDto,
+  CreateFighterClassDto,
+  CreateFighterPrototypeDto,
+  CreateGangDto,
+} from "../schemas";
 import * as factionsDb from "./db/factions";
 import * as fighterClassesDb from "./db/fighter-classes";
 import * as fighterPrototypesDb from "./db/fighter-prototypes";
+import * as gangsDb from "./db/gangs";
 
 const apiUrl = "http://localhost:8000";
 
@@ -55,4 +59,17 @@ export const handlers = [
       }
     }
   ),
+  rest.get(`${apiUrl}/gangs`, async (req, res, ctx) => {
+    const gangs = await gangsDb.readAll();
+    return res(ctx.json(gangs));
+  }),
+  rest.post<CreateGangDto>(`${apiUrl}/gangs`, async (req, res, ctx) => {
+    const gangDto = req.body;
+    try {
+      const gang = await gangsDb.create(gangDto);
+      return res(ctx.status(201), ctx.json(gang));
+    } catch (e) {
+      return res(ctx.status(e.status), ctx.json(e.message));
+    }
+  }),
 ];

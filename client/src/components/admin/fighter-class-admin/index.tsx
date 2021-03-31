@@ -9,6 +9,7 @@ import {
   useCreateFighterClass,
 } from "../../../hooks/fighter-classes";
 import { box, stack, stackSmall, cluster } from "../../../styles";
+import { StandardFormControl } from "../../form";
 
 const addFighterClassFormSchema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -77,12 +78,14 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
         </table>
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
-        <div css={stackSmall}>
-          <label htmlFor="name">Name:</label>
-          <input type="text" id="name" name="name" ref={register} />
-          {errors.name ? <span role="alert">{errors.name.message}</span> : null}
-        </div>
-
+        <StandardFormControl
+          label="Name:"
+          name="name"
+          renderControlElement={(props) => (
+            <input type="text" ref={register} {...props} />
+          )}
+          error={errors.name}
+        />
         <div css={cluster}>
           <div>
             <button type="submit">Add Fighter Class</button>

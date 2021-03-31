@@ -2,7 +2,6 @@
 import React, { useMemo } from "react";
 import { useTable } from "react-table";
 import { Controller, useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { createFighterPrototypeDtoSchema } from "../../../schemas/fighter-prototype.schema";
@@ -11,19 +10,9 @@ import {
   useCreateFighterPrototype,
 } from "../../../hooks/fighter-prototypes";
 import { useReadFactions } from "../../../hooks/factions";
-import { box, stack, stackSmall, cluster } from "../../../styles";
+import { box, stack, cluster } from "../../../styles";
 import { useReadFighterClasses } from "../../../hooks/fighter-classes";
 import { StandardFormControl } from "../../form";
-
-const uniqueIdFactory = () => {
-  let num = 0;
-  return (prefix = "") => {
-    num += 1;
-    return `${prefix}_${num}`;
-  };
-};
-
-const generateId = uniqueIdFactory();
 
 const addFighterPrototypeFormSchema = z.object({
   name: createFighterPrototypeDtoSchema.shape.name.nonempty({
@@ -41,6 +30,12 @@ const addFighterPrototypeFormSchema = z.object({
   fighterStats: createFighterPrototypeDtoSchema.shape.fighterStats,
 });
 type AddFighterClassForm = z.infer<typeof addFighterPrototypeFormSchema>;
+
+type RenderControlProps = Parameters<
+  React.ComponentPropsWithoutRef<
+    typeof StandardFormControl
+  >["renderControlElement"]
+>[0];
 
 interface FighterPrototypeAdminProps {}
 export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
@@ -173,74 +168,21 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     data,
   });
 
-  function renderFormControl({
-    name,
-    label,
-    renderControlElement,
-  }: {
-    name: string;
-    label: string;
-    renderControlElement: (props: { id: string }) => React.ReactNode;
-  }) {
-    const id = generateId();
+  function renderNumberControl({ name, ...props }: RenderControlProps) {
     return (
-      <div css={stackSmall}>
-        <label htmlFor={id}>{label}</label>
-        {renderControlElement({ id })}
-        <ErrorMessage
-          errors={errors}
-          name={name}
-          render={({ message }) => <span role="alert">{message}</span>}
-        />
-      </div>
+      <Controller
+        name={name}
+        control={control}
+        render={({ value, onChange }) => (
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => onChange(parseInt(e.target.value, 10))}
+            {...props}
+          />
+        )}
+      />
     );
-  }
-
-  function renderNumericInput({
-    name,
-    label,
-  }: {
-    name: string;
-    label: string;
-  }) {
-    return renderFormControl({
-      name,
-      label,
-      renderControlElement: ({ id }) => (
-        <Controller
-          name={name}
-          control={control}
-          render={({ value, onChange }) => (
-            <input
-              type="number"
-              id={id}
-              value={value}
-              onChange={(e) => onChange(parseInt(e.target.value, 10))}
-            />
-          )}
-        />
-      ),
-    });
-  }
-
-  function renderSelectInput({
-    name,
-    label,
-    options,
-  }: {
-    name: string;
-    label: string;
-    options: React.ReactNode;
-  }) {
-    return renderFormControl({
-      name,
-      label,
-      renderControlElement: ({ id }) => (
-        <select name={name} id={id} ref={register}>
-          {options}
-        </select>
-      ),
-    });
   }
 
   return (
@@ -286,76 +228,112 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
           )}
           error={errors.name}
         />
-        {renderNumericInput({
-          name: "cost",
-          label: "Cost:",
-        })}
-        {renderSelectInput({
-          name: "factionId",
-          label: "Faction:",
-          options: factions.map((faction) => (
-            <option key={faction.id} value={faction.id}>
-              {faction.name}
-            </option>
-          )),
-        })}
-        {renderSelectInput({
-          name: "fighterClassId",
-          label: "Fighter Class:",
-          options: fighterClasses.map((faction) => (
-            <option key={faction.id} value={faction.id}>
-              {faction.name}
-            </option>
-          )),
-        })}
-        {renderNumericInput({
-          name: "fighterStats.movement",
-          label: "Movement:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.weaponSkill",
-          label: "Weapon Skill:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.ballisticSkill",
-          label: "Ballistic Skill:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.strength",
-          label: "Strength:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.toughness",
-          label: "Toughness:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.wounds",
-          label: "Wounds:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.initiative",
-          label: "Initiative:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.attacks",
-          label: "Attacks:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.leadership",
-          label: "Leadership:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.cool",
-          label: "Cool:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.will",
-          label: "Will:",
-        })}
-        {renderNumericInput({
-          name: "fighterStats.intelligence",
-          label: "Intelligence:",
-        })}
+        <StandardFormControl
+          name="cost"
+          label="Cost:"
+          renderControlElement={renderNumberControl}
+          error={errors.cost}
+        />
+        <StandardFormControl
+          name="factionId"
+          label="Faction:"
+          renderControlElement={(props) => (
+            <select ref={register} {...props}>
+              {factions.map((faction) => (
+                <option key={faction.id} value={faction.id}>
+                  {faction.name}
+                </option>
+              ))}
+            </select>
+          )}
+          error={errors.factionId}
+        />
+        <StandardFormControl
+          name="fighterClassId"
+          label="Fighter Class:"
+          renderControlElement={(props) => (
+            <select ref={register} {...props}>
+              {fighterClasses.map((faction) => (
+                <option key={faction.id} value={faction.id}>
+                  {faction.name}
+                </option>
+              ))}
+            </select>
+          )}
+          error={errors.factionId}
+        />
+        <StandardFormControl
+          name="fighterStats.movement"
+          label="Movement:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.movement}
+        />
+        <StandardFormControl
+          name="fighterStats.weaponSkill"
+          label="Weapon Skill:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.weaponSkill}
+        />
+        <StandardFormControl
+          name="fighterStats.ballisticSkill"
+          label="Ballistic Skill:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.ballisticSkill}
+        />
+        <StandardFormControl
+          name="fighterStats.strength"
+          label="Strength:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.strength}
+        />
+        <StandardFormControl
+          name="fighterStats.toughness"
+          label="Toughness:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.toughness}
+        />
+        <StandardFormControl
+          name="fighterStats.wounds"
+          label="Initiative:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.wounds}
+        />
+        <StandardFormControl
+          name="fighterStats.initiative"
+          label="Initiative:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.initiative}
+        />
+        <StandardFormControl
+          name="fighterStats.attacks"
+          label="Attacks:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.attacks}
+        />
+        <StandardFormControl
+          name="fighterStats.leadership"
+          label="Leadership:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.leadership}
+        />
+        <StandardFormControl
+          name="fighterStats.cool"
+          label="Cool:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.cool}
+        />
+        <StandardFormControl
+          name="fighterStats.will"
+          label="Will:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.will}
+        />
+        <StandardFormControl
+          name="fighterStats.intelligence"
+          label="Intelligence:"
+          renderControlElement={renderNumberControl}
+          error={errors.fighterStats?.intelligence}
+        />
         <div css={cluster}>
           <div>
             <button type="submit">Add Fighter Class</button>

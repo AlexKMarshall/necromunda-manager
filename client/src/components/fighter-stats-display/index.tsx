@@ -2,7 +2,7 @@
 import React, { ReactNode } from "react";
 import { css } from "@emotion/react";
 import { VisuallyHidden } from "@chakra-ui/react";
-import { FighterStats as FighterStatsType } from "../../schemas/fighter.schema";
+import { FighterStats as FighterStatsType } from "../../schemas/";
 
 const dlStyle = css`
   display: grid;
@@ -36,39 +36,64 @@ interface FighterStatMeta {
 }
 
 const fighterStatsMetas: FighterStatMeta[] = [
-  { statKey: "m", render: capitalize, label: "Movement", type: "regular" },
-  { statKey: "ws", render: capitalize, label: "Weapon skill", type: "regular" },
   {
-    statKey: "bs",
+    statKey: "movement",
+    render: capitalize,
+    label: "Movement",
+    type: "regular",
+  },
+  {
+    statKey: "weaponSkill",
+    render: capitalize,
+    label: "Weapon skill",
+    type: "regular",
+  },
+  {
+    statKey: "ballisticSkill",
     render: capitalize,
     label: "Ballistic skill",
     type: "regular",
   },
-  { statKey: "s", render: capitalize, label: "Strength", type: "regular" },
-  { statKey: "t", render: capitalize, label: "Toughness", type: "regular" },
-  { statKey: "w", render: capitalize, label: "Wounds", type: "regular" },
-  { statKey: "i", render: capitalize, label: "Initiative", type: "regular" },
-  { statKey: "a", render: capitalize, label: "Attacks", type: "regular" },
   {
-    statKey: "ld",
+    statKey: "strength",
+    render: capitalize,
+    label: "Strength",
+    type: "regular",
+  },
+  {
+    statKey: "toughness",
+    render: capitalize,
+    label: "Toughness",
+    type: "regular",
+  },
+  { statKey: "wounds", render: capitalize, label: "Wounds", type: "regular" },
+  {
+    statKey: "initiative",
+    render: capitalize,
+    label: "Initiative",
+    type: "regular",
+  },
+  { statKey: "attacks", render: capitalize, label: "Attacks", type: "regular" },
+  {
+    statKey: "leadership",
     render: renderDropCap,
     label: "Leadership",
     type: "psychology",
   },
   {
-    statKey: "cl",
+    statKey: "cool",
     render: renderDropCap,
     label: "Cool",
     type: "psychology",
   },
   {
-    statKey: "wil",
+    statKey: "will",
     render: renderDropCap,
     label: "Will",
     type: "psychology",
   },
   {
-    statKey: "int",
+    statKey: "intelligence",
     render: renderDropCap,
     label: "Intelligence",
     type: "psychology",

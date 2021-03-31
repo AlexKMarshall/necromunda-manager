@@ -1,9 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import {
-  FighterPrototype,
-  CreateFighterPrototypeDto,
-} from "../../schemas/fighter-prototype.schema";
+import { FighterPrototype, CreateFighterPrototypeDto } from "../../schemas";
 import * as factionsDb from "./factions";
 import * as fighterClassesDb from "./fighter-classes";
 

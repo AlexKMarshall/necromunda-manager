@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { factionSchema } from "./faction.schema";
 import { fighterClassSchema } from "./fighter-class.schema";
+import { fighterStatsSchema } from "./fighter-stats.schema";
 
 export const fighterPrototypeSchema = z.object({
   name: z.string(),
@@ -8,20 +9,7 @@ export const fighterPrototypeSchema = z.object({
   faction: factionSchema,
   fighterClass: fighterClassSchema,
   cost: z.number(),
-  fighterStats: z.object({
-    movement: z.number(),
-    weaponSkill: z.number(),
-    ballisticSkill: z.number(),
-    strength: z.number(),
-    toughness: z.number(),
-    wounds: z.number(),
-    initiative: z.number(),
-    attacks: z.number(),
-    leadership: z.number(),
-    cool: z.number(),
-    will: z.number(),
-    intelligence: z.number(),
-  }),
+  fighterStats: fighterStatsSchema,
 });
 
 export type FighterPrototype = z.infer<typeof fighterPrototypeSchema>;

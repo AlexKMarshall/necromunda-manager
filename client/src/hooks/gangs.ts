@@ -24,6 +24,8 @@ export function useReadGangs() {
   return { ...queryResult, gangs };
 }
 
+const initialGang = { stash: { credits: 1000 }, fighters: [] };
+
 export function useCreateGang() {
   const { user } = useAuth0();
   const client = useAuthClient();
@@ -45,9 +47,11 @@ export function useCreateGang() {
       queryClient.setQueryData<Gang[]>(QUERY_KEYS.gangs, (old) => {
         const oldGangs = old ?? [];
         const newGang = {
+          ...initialGang,
           id: createTempId(),
           name,
           faction,
+          userId: user.sub,
         };
         return [...oldGangs, newGang];
       });

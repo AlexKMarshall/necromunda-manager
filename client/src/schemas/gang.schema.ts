@@ -7,6 +7,10 @@ export const gangSchema = z.object({
   id: z.string(),
   faction: factionSchema,
   userId: z.string().optional(),
+  stash: z.object({
+    credits: z.number(),
+  }),
+  fighters: z.array(fighterSchema),
 });
 
 export type Gang = z.infer<typeof gangSchema>;
@@ -18,9 +22,3 @@ export const createGangDtoSchema = gangSchema
   .extend({ factionId: gangSchema.shape.faction.shape.id });
 
 export type CreateGangDto = z.infer<typeof createGangDtoSchema>;
-
-export const gangDetailSchema = gangSchema.extend({
-  stash: z.number(),
-  fighters: fighterSchema.array(),
-});
-export type GangDetail = z.infer<typeof gangDetailSchema>;

@@ -1,6 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { Gang, CreateGangDto } from "../../schemas/gang.schema";
+import { Gang, CreateGangDto } from "../../schemas";
 import * as factionsDb from "./factions";
 
 const gangsKey = "__necromunda_gangs__";
@@ -24,6 +24,8 @@ try {
   persist();
 }
 
+const initialGang = { stash: { credits: 1000 }, fighters: [] };
+
 async function create({ name, factionId }: CreateGangDto) {
   const gangs = await readAll();
   if (gangs.some((gang) => gang.name === name)) {
@@ -32,7 +34,7 @@ async function create({ name, factionId }: CreateGangDto) {
   const faction = await factionsDb.read(factionId);
 
   const id = faker.random.uuid();
-  gangsStore[id] = { id, name, faction };
+  gangsStore[id] = { ...initialGang, id, name, faction };
   persist();
   return read(id);
 }

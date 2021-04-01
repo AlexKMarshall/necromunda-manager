@@ -1,13 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
-import { Row, useTable } from "react-table";
+import { CellValue, Row, useTable } from "react-table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useReadFactions, useCreateFaction } from "../../../hooks/factions";
+import {
+  useReadFactions,
+  useCreateFaction,
+  useDeleteFaction,
+} from "../../../hooks/factions";
 import { box, stack, cluster } from "../../../styles";
 import { StandardFormControl } from "../../form";
 import { ArrayElement } from "../../../utils/types";
+import { Faction } from "../../../schemas";
 
 const addFactionFormSchema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -29,13 +34,17 @@ export function FactionAdmin(props: FactionAdminProps) {
         accessor: "id" as const,
         Cell: ({
           row: { original },
+          value,
         }: {
           row: Row<ArrayElement<typeof data>>;
+          value: CellValue;
         }) => (
           <div>
             {original.loading ? (
               <span aria-label="loading">Spinner</span>
-            ) : null}
+            ) : (
+              <DeleteFactionButton id={value} name={original.name} />
+            )}
           </div>
         ),
       },
@@ -96,7 +105,7 @@ export function FactionAdmin(props: FactionAdminProps) {
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
         <StandardFormControl
-          label="Name:"
+          label="Faction Name:"
           name="name"
           renderControlElement={(props) => (
             <input type="text" ref={register} {...props} />
@@ -110,5 +119,18 @@ export function FactionAdmin(props: FactionAdminProps) {
         </div>
       </form>
     </div>
+  );
+}
+
+interface DeleteFactionButtonProps {
+  id: Faction["id"];
+  name: Faction["name"];
+}
+function DeleteFactionButton({ id, name }: DeleteFactionButtonProps) {
+  const { deleteFaction } = useDeleteFaction(id);
+  return (
+    <button onClick={deleteFaction} aria-label={`delete faction ${name}`}>
+      Delete
+    </button>
   );
 }

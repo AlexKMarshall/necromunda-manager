@@ -15,9 +15,14 @@ const apiUrl = "http://localhost:8000";
 
 const variableRequestTime = 400;
 const minRequestTime = 400;
-
-function sleep(t = Math.random() * variableRequestTime + minRequestTime) {
-  return new Promise((resolve) => setTimeout(resolve, t));
+let sleep: (t?: number) => any;
+if (process.env.CI) {
+  sleep = () => Promise.resolve();
+} else if (process.env.NODE_ENV === "test") {
+  sleep = () => Promise.resolve();
+} else {
+  sleep = (t = Math.random() * variableRequestTime + minRequestTime) =>
+    new Promise((resolve) => setTimeout(resolve, t));
 }
 
 export const handlers = [
@@ -27,12 +32,13 @@ export const handlers = [
   }),
   rest.post<CreateFactionDto>(`${apiUrl}/factions`, async (req, res, ctx) => {
     const { name } = req.body;
-    try {
-      const faction = await factionsDb.create({ name });
-      return res(ctx.status(201), ctx.json(faction));
-    } catch (e) {
-      return res(ctx.status(e.status), ctx.json(e.message));
-    }
+    const faction = await factionsDb.create({ name });
+    return res(ctx.status(201), ctx.json(faction));
+  }),
+  rest.delete(`${apiUrl}/factions/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    await factionsDb.remove(id);
+    return res(ctx.status(200), ctx.json(`Faction id ${id} deleted`));
   }),
   rest.get(`${apiUrl}/fighter-classes`, async (req, res, ctx) => {
     const fighterClasses = await fighterClassesDb.readAll();
@@ -42,12 +48,8 @@ export const handlers = [
     `${apiUrl}/fighter-classes`,
     async (req, res, ctx) => {
       const { name } = req.body;
-      try {
-        const fighterClass = await fighterClassesDb.create({ name });
-        return res(ctx.status(201), ctx.json(fighterClass));
-      } catch (e) {
-        return res(ctx.status(e.status), ctx.json(e.message));
-      }
+      const fighterClass = await fighterClassesDb.create({ name });
+      return res(ctx.status(201), ctx.json(fighterClass));
     }
   ),
   rest.get(`${apiUrl}/fighter-prototypes`, async (req, res, ctx) => {
@@ -58,12 +60,8 @@ export const handlers = [
     `${apiUrl}/fighter-prototypes`,
     async (req, res, ctx) => {
       const fp = req.body;
-      try {
-        const fighterPrototype = await fighterPrototypesDb.create(fp);
-        return res(ctx.status(201), ctx.json(fighterPrototype));
-      } catch (e) {
-        return res(ctx.status(e.status), ctx.json(e.message));
-      }
+      const fighterPrototype = await fighterPrototypesDb.create(fp);
+      return res(ctx.status(201), ctx.json(fighterPrototype));
     }
   ),
   rest.get(`${apiUrl}/gangs`, async (req, res, ctx) => {
@@ -77,12 +75,8 @@ export const handlers = [
   }),
   rest.post<CreateGangDto>(`${apiUrl}/gangs`, async (req, res, ctx) => {
     const gangDto = req.body;
-    try {
-      const gang = await gangsDb.create(gangDto);
-      return res(ctx.status(201), ctx.json(gang));
-    } catch (e) {
-      return res(ctx.status(e.status), ctx.json(e.message));
-    }
+    const gang = await gangsDb.create(gangDto);
+    return res(ctx.status(201), ctx.json(gang));
   }),
 ].map((handler) => {
   const originalResolver = handler.resolver;

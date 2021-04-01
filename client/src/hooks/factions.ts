@@ -22,8 +22,6 @@ export const defaultFaction: Faction = {
   name: "Loading...",
 };
 
-type WithLoading<T> = T & { loading?: boolean };
-
 export function useReadFactions() {
   const client = useAuthClient();
 
@@ -96,21 +94,21 @@ export function useCreateFaction() {
   return { ...mutationResult, postFaction };
 }
 
-export function useDeleteFaction() {
+export function useDeleteFaction(id: Faction["id"]) {
   const client = useAuthClient();
   const queryClient = useQueryClient();
 
-  const query = (factionId: string) =>
-    client(`${endpoint}/${factionId}`, undefined, { method: "DELETE" });
+  const query = () =>
+    client(`${endpoint}/${id}`, undefined, { method: "DELETE" });
 
   const mutationResult = useMutation(query, {
-    onMutate: async (factionId) => {
+    onMutate: async () => {
       await queryClient.cancelQueries(QUERY_KEYS.factions);
 
       const previousFactions = queryClient.getQueryData(QUERY_KEYS.factions);
 
       queryClient.setQueryData<Faction[]>(QUERY_KEYS.factions, (old) =>
-        old ? old.filter((f) => f.id !== factionId) : []
+        old ? old.filter((f) => f.id !== id) : []
       );
 
       return () => {

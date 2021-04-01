@@ -1,6 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { Gang, CreateGangDto } from "../../schemas";
+import { Gang, CreateGangDto } from "../../../schemas";
 import * as factionsDb from "./factions";
 
 const gangsKey = "__necromunda_gangs__";

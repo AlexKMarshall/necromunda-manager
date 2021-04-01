@@ -5,7 +5,7 @@ import {
   CreateFighterClassDto,
   CreateFighterPrototypeDto,
   CreateGangDto,
-} from "../schemas";
+} from "../../schemas";
 import * as factionsDb from "./db/factions";
 import * as fighterClassesDb from "./db/fighter-classes";
 import * as fighterPrototypesDb from "./db/fighter-prototypes";

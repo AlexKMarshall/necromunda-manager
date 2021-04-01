@@ -8,7 +8,7 @@ import {
   useReadFighterClasses,
   useCreateFighterClass,
 } from "../../../hooks/fighter-classes";
-import { box, stack, stackSmall, cluster } from "../../../styles";
+import { box, stack, cluster } from "../../../styles";
 import { StandardFormControl } from "../../form";
 
 const addFighterClassFormSchema = z.object({

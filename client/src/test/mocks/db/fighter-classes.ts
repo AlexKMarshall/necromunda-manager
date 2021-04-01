@@ -1,6 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { FighterClass, CreateFighterClassDto } from "../../schemas";
+import { FighterClass, CreateFighterClassDto } from "../../../schemas";
 
 const fighterClassesKey = "__necromunda_fighter_classes__";
 

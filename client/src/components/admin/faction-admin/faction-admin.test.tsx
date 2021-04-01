@@ -9,7 +9,7 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { FactionAdmin } from ".";
 import faker from "faker";
-import * as factionsDb from "../../../mocks/db/factions";
+import * as factionsDb from "../../../test/mocks/db/factions";
 import { Faction } from "../../../schemas";
 
 function buildFaction(overrides?: Partial<Faction>): Faction {

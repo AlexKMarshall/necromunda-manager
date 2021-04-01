@@ -1,7 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { Faction, CreateFactionDto } from "../../schemas";
-import { isArray } from "util";
+import { Faction, CreateFactionDto } from "../../../schemas";
 
 const factionsKey = "__necromunda_factions__";
 

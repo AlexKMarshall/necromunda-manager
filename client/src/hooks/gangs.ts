@@ -23,8 +23,15 @@ export function useReadGangs() {
 
   return { ...queryResult, gangs };
 }
-
-const initialGang = { stash: { credits: 1000 }, fighters: [] };
+const initialCredits = 1000;
+const initialGang = {
+  stash: { credits: initialCredits },
+  rating: 0,
+  reputation: 1,
+  wealth: initialCredits,
+  fighters: [],
+  territories: [],
+};
 
 export function useCreateGang() {
   const { user } = useAuth0();

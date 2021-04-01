@@ -24,7 +24,15 @@ try {
   persist();
 }
 
-const initialGang = { stash: { credits: 1000 }, fighters: [] };
+const initialCredits = 1000;
+const initialGang = {
+  stash: { credits: initialCredits },
+  rating: 0,
+  reputation: 1,
+  wealth: initialCredits,
+  fighters: [],
+  territories: [],
+};
 
 async function create({ name, factionId }: CreateGangDto) {
   const gangs = await readAll();

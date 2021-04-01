@@ -86,12 +86,14 @@ test("can delete fighter classes", async () => {
     ...screen.queryAllByText(/loading/i),
   ]);
 
-  const deleteFactionTwoRegex = new RegExp(
+  const deleteFighterClassTwoRegex = new RegExp(
     `delete fighter class ${fighterClassTwo.name}`,
     "i"
   );
 
-  userEvent.click(screen.getByRole("button", { name: deleteFactionTwoRegex }));
+  userEvent.click(
+    screen.getByRole("button", { name: deleteFighterClassTwoRegex })
+  );
 
   await waitForElementToBeRemoved(() => screen.getByText(fighterClassTwo.name));
   expect(screen.getByText(fighterClassOne.name)).toBeInTheDocument();

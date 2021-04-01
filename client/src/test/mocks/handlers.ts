@@ -69,6 +69,11 @@ export const handlers = [
       return res(ctx.status(201), ctx.json(fighterPrototype));
     }
   ),
+  rest.delete(`${apiUrl}/fighter-prototypes/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const fp = await fighterPrototypesDb.remove(id);
+    return res(ctx.status(200), ctx.json(fp));
+  }),
   rest.get(`${apiUrl}/gangs`, async (req, res, ctx) => {
     const gangs = await gangsDb.readAll();
     return res(ctx.json(gangs));

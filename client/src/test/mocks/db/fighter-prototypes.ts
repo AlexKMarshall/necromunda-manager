@@ -28,6 +28,14 @@ try {
   persist();
 }
 
+async function insert(...fighterPrototypes: FighterPrototype[]) {
+  fighterPrototypes.forEach((fp) => {
+    fighterPrototypesStore[fp.id] = fp;
+  });
+  persist();
+  return fighterPrototypes;
+}
+
 async function create({
   name,
   cost,
@@ -74,4 +82,10 @@ function validateFighterPrototype(id: FighterPrototype["id"]) {
   }
 }
 
-export { create, readAll, read };
+async function remove(id: FighterPrototype["id"]) {
+  const fp = read(id);
+  delete fighterPrototypesStore[id];
+  return fp;
+}
+
+export { insert, create, readAll, read, remove };

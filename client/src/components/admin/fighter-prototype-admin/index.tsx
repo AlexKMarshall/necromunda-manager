@@ -1,18 +1,23 @@
 /** @jsxImportSource @emotion/react */
 import React, { useMemo } from "react";
-import { useTable } from "react-table";
+import { CellValue, Row, useTable } from "react-table";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { createFighterPrototypeDtoSchema } from "../../../schemas/fighter-prototype.schema";
+import {
+  createFighterPrototypeDtoSchema,
+  FighterPrototype,
+} from "../../../schemas/fighter-prototype.schema";
 import {
   useReadFighterPrototypes,
   useCreateFighterPrototype,
+  useDeleteFighterPrototype,
 } from "../../../hooks/fighter-prototypes";
 import { useReadFactions } from "../../../hooks/factions";
 import { box, stack, cluster } from "../../../styles";
 import { useReadFighterClasses } from "../../../hooks/fighter-classes";
 import { StandardFormControl } from "../../form";
+import { ArrayElement } from "../../../utils/types";
 
 const addFighterPrototypeFormSchema = z.object({
   name: createFighterPrototypeDtoSchema.shape.name.nonempty({
@@ -57,6 +62,17 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
       factionId: "",
       fighterStats: {
         movement: 0,
+        weaponSkill: 0,
+        ballisticSkill: 0,
+        strength: 0,
+        toughness: 0,
+        wounds: 0,
+        initiative: 0,
+        attacks: 0,
+        leadership: 0,
+        cool: 0,
+        will: 0,
+        intelligence: 0,
       },
     },
     resolver: zodResolver(addFighterPrototypeFormSchema),
@@ -72,17 +88,21 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     () =>
       fighterPrototypes.map(
         ({
+          id,
           name,
           cost,
           faction: { name: factionName },
           fighterClass: { name: fighterClassName },
           fighterStats,
+          loading,
         }) => ({
+          id,
           name,
           cost,
           factionName,
           fighterClassName,
           ...fighterStats,
+          loading,
         })
       ),
     [fighterPrototypes]
@@ -154,6 +174,25 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         Header: "Int",
         accessor: "intelligence" as const,
       },
+      {
+        Header: "Actions",
+        accessor: "id" as const,
+        Cell: ({
+          row: { original },
+          value,
+        }: {
+          row: Row<ArrayElement<typeof data>>;
+          value: CellValue;
+        }) =>
+          original.loading ? (
+            <span aria-label="loading">Spinner</span>
+          ) : (
+            <DeleteFighterPrototypeButton
+              id={value}
+              label={`Delete Fighter Prototype ${original.name}`}
+            />
+          ),
+      },
     ],
     []
   );
@@ -222,7 +261,7 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
         <StandardFormControl
           name="name"
-          label="Name:"
+          label="Fighter Prototype Name:"
           renderControlElement={(props) => (
             <input {...props} type="text" ref={register} />
           )}
@@ -294,7 +333,7 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         />
         <StandardFormControl
           name="fighterStats.wounds"
-          label="Initiative:"
+          label="Wounds:"
           renderControlElement={renderNumberControl}
           error={errors.fighterStats?.wounds}
         />
@@ -341,5 +380,21 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
         </div>
       </form>
     </div>
+  );
+}
+
+interface DeleteFighterPrototypeButtonProps {
+  id: FighterPrototype["id"];
+  label: string;
+}
+function DeleteFighterPrototypeButton({
+  id,
+  label,
+}: DeleteFighterPrototypeButtonProps) {
+  const { deleteFighterPrototype } = useDeleteFighterPrototype(id);
+  return (
+    <button onClick={() => deleteFighterPrototype()} aria-label={label}>
+      Delete
+    </button>
   );
 }

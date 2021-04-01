@@ -63,6 +63,11 @@ export const handlers = [
     const gangs = await gangsDb.readAll();
     return res(ctx.json(gangs));
   }),
+  rest.get(`${apiUrl}/gangs/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const gangs = await gangsDb.read(id);
+    return res(ctx.json(gangs));
+  }),
   rest.post<CreateGangDto>(`${apiUrl}/gangs`, async (req, res, ctx) => {
     const gangDto = req.body;
     try {

@@ -11,3 +11,8 @@ export const createFighterClassDtoSchema = fighterClassSchema.omit({
   id: true,
 });
 export type CreateFighterClassDto = z.infer<typeof createFighterClassDtoSchema>;
+
+export const loadingFighterClass: FighterClass = {
+  id: "loading",
+  name: "Loading...",
+};

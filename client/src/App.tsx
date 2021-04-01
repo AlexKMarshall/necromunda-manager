@@ -10,6 +10,7 @@ import { GangList } from "./components/gang-list";
 import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
 import { cluster } from "./styles";
+import { Gang } from "./pages";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -45,6 +46,9 @@ function AuthenticatedApp() {
         </Route>
         <Route path="/gangs" exact>
           <GangList />
+        </Route>
+        <Route path="/gangs/:id" exact>
+          <Gang />
         </Route>
       </Switch>
     </>

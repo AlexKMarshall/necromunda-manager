@@ -1,8 +1,15 @@
 import * as z from "zod";
-import { fighterPrototypeSchema } from "./fighter-prototype.schema";
-import { fighterStatsSchema } from "./fighter-stats.schema";
+import {
+  fighterPrototypeSchema,
+  loadingFighterPrototype,
+} from "./fighter-prototype.schema";
+import {
+  fighterStatsSchema,
+  loadingFighterStats,
+} from "./fighter-stats.schema";
 
 export const fighterSchema = z.object({
+  id: z.string(),
   name: z.string(),
   fighterPrototype: fighterPrototypeSchema,
   cost: z.number(),
@@ -15,3 +22,14 @@ export const fighterSchema = z.object({
 });
 
 export type Fighter = z.infer<typeof fighterSchema>;
+
+export const loadingFighter: Fighter = {
+  id: "loading",
+  name: "Loading...",
+  fighterPrototype: loadingFighterPrototype,
+  cost: 0,
+  experience: 0,
+  advancements: 0,
+  recovery: false,
+  fighterStats: loadingFighterStats,
+};

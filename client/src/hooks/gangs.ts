@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { QUERY_KEYS } from "../constants/query-keys";
-import { CreateGangDto, gangSchema, Gang } from "../schemas/gang.schema";
+import { CreateGangDto, gangSchema, Gang, loadingGang } from "../schemas";
 import { useReadFactions, defaultFaction } from "./factions";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuthClient } from "./client";
@@ -23,6 +23,25 @@ export function useReadGangs() {
 
   return { ...queryResult, gangs };
 }
+
+export function useReadGang(id: Gang["id"]) {
+  const client = useAuthClient();
+
+  const query = async () => {
+    try {
+      const data = await client(`gangs/${id}`);
+      return gangSchema.parse(data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
+  const queryResult = useQuery([QUERY_KEYS.gangs, id], query);
+
+  const gang = queryResult.data ?? loadingGang;
+
+  return { ...queryResult, gang };
+}
+
 const initialCredits = 1000;
 const initialGang = {
   stash: { credits: initialCredits },

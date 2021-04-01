@@ -33,6 +33,10 @@ body {
   line-height: 1.5;
 }
 
+a {
+  color: inherit;
+}
+
 a:not([class]) {
   text-decoration-skip-ink: auto;
 }

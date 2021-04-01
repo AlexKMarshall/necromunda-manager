@@ -27,6 +27,7 @@ async function insert(...factions: Faction[]) {
     factionsStore[faction.id] = faction;
   });
   persist();
+  return factions;
 }
 
 async function create({ name }: CreateFactionDto) {
@@ -58,8 +59,10 @@ function validateFaction(id: Faction["id"]) {
 }
 
 async function remove(id: Faction["id"]) {
-  validateFaction(id);
+  const faction = read(id);
   delete factionsStore[id];
+  persist();
+  return faction;
 }
 
 async function reset() {

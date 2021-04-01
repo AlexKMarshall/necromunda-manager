@@ -3,42 +3,42 @@ import {
   screen,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { FactionAdmin } from ".";
 import faker from "faker";
-import * as factionsDb from "../../../test/mocks/db/factions";
-import { Faction } from "../../../schemas";
+import userEvent from "@testing-library/user-event";
+import { FighterClassAdmin } from ".";
+import { FighterClass } from "../../../schemas";
+import * as fighterClassesDb from "../../../test/mocks/db/fighter-classes";
 
-function buildFaction(overrides?: Partial<Faction>): Faction {
+function buildFighterClass(overrides?: Partial<FighterClass>): FighterClass {
   return {
     id: faker.random.uuid(),
-    name: faker.company.companyName(),
+    name: faker.company.bsNoun(),
     ...overrides,
   };
 }
 
-afterEach(async () => {
-  await factionsDb.reset();
-});
-
-test("can add a faction", async () => {
+test("can add a fighter class", async () => {
   const queryClient = new QueryClient();
   const wrapper = ({ children }: { children?: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-  render(<FactionAdmin />, { wrapper });
+
+  render(<FighterClassAdmin />, { wrapper });
 
   await waitForElementToBeRemoved(() => [
     ...screen.queryAllByLabelText(/loading/i),
     ...screen.queryAllByText(/loading/i),
   ]);
 
-  const { name } = buildFaction();
+  const { name } = buildFighterClass();
 
-  userEvent.type(screen.getByRole("textbox", { name: /faction name/i }), name);
-  userEvent.click(screen.getByRole("button", { name: /add faction/i }));
+  userEvent.type(
+    screen.getByRole("textbox", { name: /fighter class name/i }),
+    name
+  );
+  userEvent.click(screen.getByRole("button", { name: /add fighter class/i }));
 
   await screen.findByLabelText(/loading/i);
 
@@ -49,35 +49,37 @@ test("can add a faction", async () => {
 
   expect(screen.getByText(name)).toBeInTheDocument();
 });
-test("can view factions", async () => {
-  const [factionOne, factionTwo] = await factionsDb.insert(
-    buildFaction(),
-    buildFaction()
+test("can view fighter classes", async () => {
+  const [fighterClassOne, fighterClassTwo] = await fighterClassesDb.insert(
+    buildFighterClass(),
+    buildFighterClass()
   );
 
   const queryClient = new QueryClient();
   const wrapper = ({ children }: { children?: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-  render(<FactionAdmin />, { wrapper });
+  render(<FighterClassAdmin />, { wrapper });
 
   await waitForElementToBeRemoved(() => [
     ...screen.queryAllByLabelText(/loading/i),
     ...screen.queryAllByText(/loading/i),
   ]);
 
-  expect(screen.getByText(factionOne.name)).toBeInTheDocument();
-  expect(screen.getByText(factionTwo.name)).toBeInTheDocument();
+  expect(screen.getByText(fighterClassOne.name)).toBeInTheDocument();
+  expect(screen.getByText(fighterClassTwo.name)).toBeInTheDocument();
 });
-test("can delete a faction", async () => {
-  const [factionOne, factionTwo] = [buildFaction(), buildFaction()];
-  factionsDb.insert(factionOne, factionTwo);
+test("can delete fighter classes", async () => {
+  const [fighterClassOne, fighterClassTwo] = await fighterClassesDb.insert(
+    buildFighterClass(),
+    buildFighterClass()
+  );
 
   const queryClient = new QueryClient();
   const wrapper = ({ children }: { children?: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-  render(<FactionAdmin />, { wrapper });
+  render(<FighterClassAdmin />, { wrapper });
 
   await waitForElementToBeRemoved(() => [
     ...screen.queryAllByLabelText(/loading/i),
@@ -85,12 +87,12 @@ test("can delete a faction", async () => {
   ]);
 
   const deleteFactionTwoRegex = new RegExp(
-    `delete faction ${factionTwo.name}`,
+    `delete fighter class ${fighterClassTwo.name}`,
     "i"
   );
 
   userEvent.click(screen.getByRole("button", { name: deleteFactionTwoRegex }));
 
-  await waitForElementToBeRemoved(() => screen.getByText(factionTwo.name));
-  expect(screen.getByText(factionOne.name)).toBeInTheDocument();
+  await waitForElementToBeRemoved(() => screen.getByText(fighterClassTwo.name));
+  expect(screen.getByText(fighterClassOne.name)).toBeInTheDocument();
 });

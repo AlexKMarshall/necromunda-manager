@@ -37,8 +37,8 @@ export const handlers = [
   }),
   rest.delete(`${apiUrl}/factions/:id`, async (req, res, ctx) => {
     const { id } = req.params;
-    await factionsDb.remove(id);
-    return res(ctx.status(200), ctx.json(`Faction id ${id} deleted`));
+    const faction = await factionsDb.remove(id);
+    return res(ctx.status(200), ctx.json(faction));
   }),
   rest.get(`${apiUrl}/fighter-classes`, async (req, res, ctx) => {
     const fighterClasses = await fighterClassesDb.readAll();
@@ -52,6 +52,11 @@ export const handlers = [
       return res(ctx.status(201), ctx.json(fighterClass));
     }
   ),
+  rest.delete(`${apiUrl}/fighter-classes/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const fighterClass = await fighterClassesDb.remove(id);
+    return res(ctx.status(200), ctx.json(fighterClass));
+  }),
   rest.get(`${apiUrl}/fighter-prototypes`, async (req, res, ctx) => {
     const fighterPrototypes = await fighterPrototypesDb.readAll();
     return res(ctx.json(fighterPrototypes));

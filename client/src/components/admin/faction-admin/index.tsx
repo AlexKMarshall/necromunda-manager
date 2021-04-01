@@ -22,10 +22,7 @@ type AddFactionForm = z.infer<typeof addFactionFormSchema>;
 interface FactionAdminProps {}
 export function FactionAdmin(props: FactionAdminProps) {
   const { isLoading, isError, error, factions } = useReadFactions();
-  const data = useMemo(
-    () => factions.map(({ id, name, loading }) => ({ id, name, loading })),
-    [factions]
-  );
+
   const columns = useMemo(
     () => [
       { Header: "Name", accessor: "name" as const },
@@ -36,7 +33,7 @@ export function FactionAdmin(props: FactionAdminProps) {
           row: { original },
           value,
         }: {
-          row: Row<ArrayElement<typeof data>>;
+          row: Row<ArrayElement<typeof factions>>;
           value: CellValue;
         }) => (
           <div>
@@ -51,6 +48,15 @@ export function FactionAdmin(props: FactionAdminProps) {
     ],
     []
   );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data: factions });
+
   const { register, handleSubmit, errors, reset } = useForm<AddFactionForm>({
     defaultValues: { name: "" },
     resolver: zodResolver(addFactionFormSchema),
@@ -61,14 +67,6 @@ export function FactionAdmin(props: FactionAdminProps) {
     await postFaction(data);
     reset();
   }
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data });
   return (
     <div css={stack}>
       <h2>Factions</h2>

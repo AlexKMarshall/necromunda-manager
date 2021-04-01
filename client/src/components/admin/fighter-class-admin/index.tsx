@@ -1,15 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
-import { useTable } from "react-table";
+import { useTable, Row, CellValue } from "react-table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
   useReadFighterClasses,
   useCreateFighterClass,
+  useDeleteFighterClass,
 } from "../../../hooks/fighter-classes";
 import { box, stack, cluster } from "../../../styles";
 import { StandardFormControl } from "../../form";
+import { ArrayElement } from "../../../utils/types";
+import { FighterClass } from "../../../schemas";
 
 const addFighterClassFormSchema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -18,11 +21,35 @@ type AddFighterClassForm = z.infer<typeof addFighterClassFormSchema>;
 
 interface FighterClassAdminProps {}
 export function FighterClassAdmin(props: FighterClassAdminProps) {
+  const { isLoading, isError, error, fighterClasses } = useReadFighterClasses();
   const columns = useMemo(
-    () => [{ Header: "Name", accessor: "name" as const }],
+    () => [
+      { Header: "Name", accessor: "name" as const },
+      {
+        Header: "Actions",
+        accessor: "id" as const,
+        Cell: ({
+          row: { original },
+          value,
+        }: {
+          row: Row<ArrayElement<typeof fighterClasses>>;
+          value: CellValue;
+        }) => (
+          <div>
+            {original.loading ? (
+              <span aria-label="loading">Spinner</span>
+            ) : (
+              <DeleteFighterClassButton
+                id={original.id}
+                label={`Delete Fighter Class ${original.name}`}
+              />
+            )}
+          </div>
+        ),
+      },
+    ],
     []
   );
-  const { isLoading, isError, error, fighterClasses } = useReadFighterClasses();
   const { register, handleSubmit, errors, reset } = useForm<
     AddFighterClassForm
   >({
@@ -79,7 +106,7 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
         <StandardFormControl
-          label="Name:"
+          label="Fighter Class Name:"
           name="name"
           renderControlElement={(props) => (
             <input type="text" ref={register} {...props} />
@@ -93,5 +120,21 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
         </div>
       </form>
     </div>
+  );
+}
+
+interface DeleteFighterClassButtonProps {
+  id: FighterClass["id"];
+  label: string;
+}
+function DeleteFighterClassButton({
+  id,
+  label,
+}: DeleteFighterClassButtonProps) {
+  const { deleteFighterClass } = useDeleteFighterClass(id);
+  return (
+    <button onClick={() => deleteFighterClass()} aria-label={label}>
+      Delete
+    </button>
   );
 }

@@ -26,6 +26,14 @@ try {
   persist();
 }
 
+async function insert(...fighterClasses: FighterClass[]) {
+  fighterClasses.forEach((fc) => {
+    fighterClassesStore[fc.id] = fc;
+  });
+  persist();
+  return fighterClasses;
+}
+
 async function create({ name }: CreateFighterClassDto) {
   const fighterClasses = await readAll();
   if (fighterClasses.some((fighterClass) => fighterClass.name === name)) {
@@ -54,4 +62,10 @@ function validateFighterClass(id: FighterClass["id"]) {
   }
 }
 
-export { create, readAll, read };
+async function remove(id: FighterClass["id"]) {
+  const fighterClass = read(id);
+  delete fighterClassesStore[id];
+  return fighterClass;
+}
+
+export { insert, create, readAll, read, remove };

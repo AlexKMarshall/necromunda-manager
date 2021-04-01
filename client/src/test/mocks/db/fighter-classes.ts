@@ -68,4 +68,9 @@ async function remove(id: FighterClass["id"]) {
   return fighterClass;
 }
 
-export { insert, create, readAll, read, remove };
+async function reset() {
+  fighterClassesStore = {};
+  persist();
+}
+
+export { insert, create, readAll, read, remove, reset };

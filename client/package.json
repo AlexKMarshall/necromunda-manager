@@ -59,7 +59,8 @@
   "jest": {
     "coveragePathIgnorePatterns": [
       "src/mocks",
-      "stories"
+      "stories",
+      "test/"
     ]
   },
   "devDependencies": {

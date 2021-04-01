@@ -2,38 +2,17 @@ import {
   render,
   screen,
   waitForElementToBeRemoved,
-} from "@testing-library/react";
+  waitForLoadingToFinish,
+} from "../../../test/test-utils";
 import userEvent from "@testing-library/user-event";
-import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { FactionAdmin } from ".";
-import faker from "faker";
 import * as factionsDb from "../../../test/mocks/db/factions";
-import { Faction } from "../../../schemas";
-
-function buildFaction(overrides?: Partial<Faction>): Faction {
-  return {
-    id: faker.random.uuid(),
-    name: faker.company.companyName(),
-    ...overrides,
-  };
-}
-
-afterEach(async () => {
-  await factionsDb.reset();
-});
+import { buildFaction } from "../../../test/mocks/generate";
 
 test("can add a faction", async () => {
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  render(<FactionAdmin />, { wrapper });
+  render(<FactionAdmin />);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   const { name } = buildFaction();
 
@@ -42,10 +21,7 @@ test("can add a faction", async () => {
 
   await screen.findByLabelText(/loading/i);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   expect(screen.getByText(name)).toBeInTheDocument();
 });
@@ -55,16 +31,9 @@ test("can view factions", async () => {
     buildFaction()
   );
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  render(<FactionAdmin />, { wrapper });
+  render(<FactionAdmin />);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   expect(screen.getByText(factionOne.name)).toBeInTheDocument();
   expect(screen.getByText(factionTwo.name)).toBeInTheDocument();
@@ -73,16 +42,9 @@ test("can delete a faction", async () => {
   const [factionOne, factionTwo] = [buildFaction(), buildFaction()];
   factionsDb.insert(factionOne, factionTwo);
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  render(<FactionAdmin />, { wrapper });
+  render(<FactionAdmin />);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   const deleteFactionTwoRegex = new RegExp(
     `delete faction ${factionTwo.name}`,

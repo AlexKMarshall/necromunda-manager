@@ -63,4 +63,9 @@ function validateGang(id: Gang["id"]) {
   }
 }
 
-export { create, readAll, read };
+async function reset() {
+  gangsStore = {};
+  persist();
+}
+
+export { create, readAll, read, reset };

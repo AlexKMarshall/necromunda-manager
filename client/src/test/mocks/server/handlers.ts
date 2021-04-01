@@ -5,11 +5,11 @@ import {
   CreateFighterClassDto,
   CreateFighterPrototypeDto,
   CreateGangDto,
-} from "../../schemas";
-import * as factionsDb from "./db/factions";
-import * as fighterClassesDb from "./db/fighter-classes";
-import * as fighterPrototypesDb from "./db/fighter-prototypes";
-import * as gangsDb from "./db/gangs";
+} from "../../../schemas";
+import * as factionsDb from "../db/factions";
+import * as fighterClassesDb from "../db/fighter-classes";
+import * as fighterPrototypesDb from "../db/fighter-prototypes";
+import * as gangsDb from "../db/gangs";
 
 const apiUrl = "http://localhost:8000";
 

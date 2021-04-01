@@ -88,4 +88,9 @@ async function remove(id: FighterPrototype["id"]) {
   return fp;
 }
 
-export { insert, create, readAll, read, remove };
+async function reset() {
+  fighterPrototypesStore = {};
+  persist();
+}
+
+export { insert, create, readAll, read, remove, reset };

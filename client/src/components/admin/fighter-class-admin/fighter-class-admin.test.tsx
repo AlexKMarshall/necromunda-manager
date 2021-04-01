@@ -2,35 +2,17 @@ import {
   render,
   screen,
   waitForElementToBeRemoved,
-} from "@testing-library/react";
-import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import faker from "faker";
+  waitForLoadingToFinish,
+} from "../../../test/test-utils";
 import userEvent from "@testing-library/user-event";
 import { FighterClassAdmin } from ".";
-import { FighterClass } from "../../../schemas";
 import * as fighterClassesDb from "../../../test/mocks/db/fighter-classes";
-
-function buildFighterClass(overrides?: Partial<FighterClass>): FighterClass {
-  return {
-    id: faker.random.uuid(),
-    name: faker.company.bsNoun(),
-    ...overrides,
-  };
-}
+import { buildFighterClass } from "../../../test/mocks/generate";
 
 test("can add a fighter class", async () => {
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  render(<FighterClassAdmin />);
 
-  render(<FighterClassAdmin />, { wrapper });
-
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   const { name } = buildFighterClass();
 
@@ -42,10 +24,7 @@ test("can add a fighter class", async () => {
 
   await screen.findByLabelText(/loading/i);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   expect(screen.getByText(name)).toBeInTheDocument();
 });
@@ -55,16 +34,9 @@ test("can view fighter classes", async () => {
     buildFighterClass()
   );
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  render(<FighterClassAdmin />, { wrapper });
+  render(<FighterClassAdmin />);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   expect(screen.getByText(fighterClassOne.name)).toBeInTheDocument();
   expect(screen.getByText(fighterClassTwo.name)).toBeInTheDocument();
@@ -75,16 +47,9 @@ test("can delete fighter classes", async () => {
     buildFighterClass()
   );
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  render(<FighterClassAdmin />, { wrapper });
+  render(<FighterClassAdmin />);
 
-  await waitForElementToBeRemoved(() => [
-    ...screen.queryAllByLabelText(/loading/i),
-    ...screen.queryAllByText(/loading/i),
-  ]);
+  await waitForLoadingToFinish();
 
   const deleteFighterClassTwoRegex = new RegExp(
     `delete fighter class ${fighterClassTwo.name}`,

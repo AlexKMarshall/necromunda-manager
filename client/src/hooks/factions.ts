@@ -22,13 +22,19 @@ export const defaultFaction: Faction = {
   name: "Loading...",
 };
 
+type WithLoading<T> = T & { loading?: boolean };
+
 export function useReadFactions() {
   const client = useAuthClient();
 
   const query = async () => {
     try {
       const data = await client(endpoint);
-      return factionSchema.array().parse(data).sort(sortByField("name"));
+      return factionSchema
+        .array()
+        .parse(data)
+        .sort(sortByField("name"))
+        .map((f) => ({ ...f, loading: false }));
     } catch (error) {
       return Promise.reject(error);
     }
@@ -71,7 +77,11 @@ export function useCreateFaction() {
 
       queryClient.setQueryData<Faction[]>(QUERY_KEYS.factions, (old) => {
         const oldFactions = old ?? [];
-        const newFaction = { id: createTempId(), name: faction.name };
+        const newFaction = {
+          id: createTempId(),
+          name: faction.name,
+          loading: true,
+        };
         return [...oldFactions, newFaction].sort(sortByField("name"));
       });
 

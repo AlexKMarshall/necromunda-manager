@@ -1,12 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
-import { useTable } from "react-table";
+import { Row, useTable } from "react-table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useReadFactions, useCreateFaction } from "../../../hooks/factions";
-import { box, stack, stackSmall, cluster } from "../../../styles";
+import { box, stack, cluster } from "../../../styles";
 import { StandardFormControl } from "../../form";
+import { ArrayElement } from "../../../utils/types";
 
 const addFactionFormSchema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -15,11 +16,32 @@ type AddFactionForm = z.infer<typeof addFactionFormSchema>;
 
 interface FactionAdminProps {}
 export function FactionAdmin(props: FactionAdminProps) {
+  const { isLoading, isError, error, factions } = useReadFactions();
+  const data = useMemo(
+    () => factions.map(({ id, name, loading }) => ({ id, name, loading })),
+    [factions]
+  );
   const columns = useMemo(
-    () => [{ Header: "Name", accessor: "name" as const }],
+    () => [
+      { Header: "Name", accessor: "name" as const },
+      {
+        Header: "Actions",
+        accessor: "id" as const,
+        Cell: ({
+          row: { original },
+        }: {
+          row: Row<ArrayElement<typeof data>>;
+        }) => (
+          <div>
+            {original.loading ? (
+              <span aria-label="loading">Spinner</span>
+            ) : null}
+          </div>
+        ),
+      },
+    ],
     []
   );
-  const { isLoading, isError, error, factions } = useReadFactions();
   const { register, handleSubmit, errors, reset } = useForm<AddFactionForm>({
     defaultValues: { name: "" },
     resolver: zodResolver(addFactionFormSchema),
@@ -37,7 +59,7 @@ export function FactionAdmin(props: FactionAdminProps) {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data: factions });
+  } = useTable({ columns, data });
   return (
     <div css={stack}>
       <h2>Factions</h2>

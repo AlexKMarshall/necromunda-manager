@@ -13,6 +13,13 @@ import * as gangsDb from "./db/gangs";
 
 const apiUrl = "http://localhost:8000";
 
+const variableRequestTime = 400;
+const minRequestTime = 400;
+
+function sleep(t = Math.random() * variableRequestTime + minRequestTime) {
+  return new Promise((resolve) => setTimeout(resolve, t));
+}
+
 export const handlers = [
   rest.get(`${apiUrl}/factions`, async (req, res, ctx) => {
     const factions = await factionsDb.readAll();
@@ -77,4 +84,23 @@ export const handlers = [
       return res(ctx.status(e.status), ctx.json(e.message));
     }
   }),
-];
+].map((handler) => {
+  const originalResolver = handler.resolver;
+  // TODO is there a way to get rid of any?
+  handler.resolver = async function resolver(...args: any[]) {
+    const [req, res, ctx] = args;
+    try {
+      const result = await originalResolver(req, res, ctx);
+      return result;
+    } catch (error) {
+      const status = error.status || 500;
+      return res(
+        ctx.status(status),
+        ctx.json({ status, message: error.message || "Unknown Error" })
+      );
+    } finally {
+      await sleep();
+    }
+  };
+  return handler;
+});

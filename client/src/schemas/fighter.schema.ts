@@ -33,3 +33,13 @@ export const loadingFighter: Fighter = {
   recovery: false,
   fighterStats: loadingFighterStats,
 };
+
+export const createFighterDtoSchema = fighterSchema
+  .pick({
+    name: true,
+  })
+  .extend({
+    fighterPrototypeId: fighterPrototypeSchema.shape.id,
+  });
+
+export type CreateFighterDto = z.infer<typeof createFighterDtoSchema>;

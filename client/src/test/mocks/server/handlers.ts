@@ -3,6 +3,7 @@ import { rest } from "msw";
 import {
   CreateFactionDto,
   CreateFighterClassDto,
+  CreateFighterDto,
   CreateFighterPrototypeDto,
   CreateGangDto,
 } from "../../../schemas";
@@ -88,6 +89,15 @@ export const handlers = [
     const gang = await gangsDb.create(gangDto);
     return res(ctx.status(201), ctx.json(gang));
   }),
+  rest.post<CreateFighterDto>(
+    `${apiUrl}/gangs/:gangId/fighters`,
+    async (req, res, ctx) => {
+      const { gangId } = req.params;
+      const createFighterDto = req.body;
+      const fighter = await gangsDb.addFighter({ gangId, createFighterDto });
+      return res(ctx.status(201), ctx.json(fighter));
+    }
+  ),
 ].map((handler) => {
   const originalResolver = handler.resolver;
   // TODO is there a way to get rid of any?

@@ -22,11 +22,19 @@ const addFighterFormSchema = z.object({
 
 type AddFighterForm = z.infer<typeof addFighterFormSchema>;
 
-export function AddFighter({ onSubmit, fighterPrototypes }: AddFighterProps) {
+export function AddFighter({
+  onSubmit: onSubmitProp,
+  fighterPrototypes,
+}: AddFighterProps) {
   const { register, handleSubmit, errors } = useForm<AddFighterForm>({
     defaultValues: { name: "", fighterPrototypeId: "" },
     resolver: zodResolver(addFighterFormSchema),
   });
+
+  function onSubmit(data: AddFighterForm) {
+    console.log("in submit handler");
+    onSubmitProp(data);
+  }
 
   return (
     <form css={stack} onSubmit={handleSubmit(onSubmit)}>

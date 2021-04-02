@@ -1,7 +1,8 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { Gang, CreateGangDto } from "../../../schemas";
+import { Gang, CreateGangDto, CreateFighterDto } from "../../../schemas";
 import * as factionsDb from "./factions";
+import * as fighterPrototypesDb from "./fighter-prototypes";
 
 const gangsKey = "__necromunda_gangs__";
 
@@ -68,4 +69,40 @@ async function reset() {
   persist();
 }
 
-export { create, readAll, read, reset };
+const initialFighter = {
+  experience: 0,
+  advancements: 0,
+  recovery: false,
+  lastingInjuries: "",
+  capturedBy: "",
+};
+
+async function addFighter({
+  gangId,
+  createFighterDto: { name, fighterPrototypeId },
+}: {
+  gangId: Gang["id"];
+  createFighterDto: CreateFighterDto;
+}) {
+  const gang = await read(gangId);
+
+  const fighterPrototype = await fighterPrototypesDb.read(fighterPrototypeId);
+
+  const id = faker.random.uuid();
+  const fighter = {
+    ...initialFighter,
+    id,
+    name,
+    fighterPrototype,
+    cost: fighterPrototype.cost,
+    fighterStats: { ...fighterPrototype.fighterStats },
+  };
+
+  gang.fighters.push(fighter);
+  gang.stash.credits -= fighter.cost;
+  gang.rating += fighter.cost;
+  persist();
+  return fighter;
+}
+
+export { create, readAll, read, reset, addFighter };

@@ -65,7 +65,8 @@ function validateFighterClass(id: FighterClass["id"]) {
 async function remove(id: FighterClass["id"]) {
   const fighterClass = read(id);
   delete fighterClassesStore[id];
-  return fighterClass;
+  persist();
+  return { deleted: fighterClass, store: fighterClassesStore };
 }
 
 async function reset() {

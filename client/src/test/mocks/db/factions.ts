@@ -43,6 +43,7 @@ async function create({ name }: CreateFactionDto) {
 }
 
 async function readAll() {
+  load();
   return Object.values(factionsStore);
 }
 

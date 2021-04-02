@@ -14,6 +14,8 @@ test("can add a fighter prototype", async () => {
 
   render(<FighterPrototypeAdmin />);
 
+  await waitForLoadingToFinish();
+
   userEvent.type(
     screen.getByRole("textbox", { name: /fighter prototype name/i }),
     fighterPrototype.name
@@ -22,13 +24,13 @@ test("can add a fighter prototype", async () => {
     screen.getByRole("spinbutton", { name: /cost/i }),
     fighterPrototype.cost.toString()
   );
-  userEvent.type(
+  userEvent.selectOptions(
     screen.getByRole("combobox", { name: /faction/i }),
-    fighterPrototype.faction.name
+    screen.getByText(fighterPrototype.faction.name)
   );
-  userEvent.type(
+  userEvent.selectOptions(
     screen.getByRole("combobox", { name: /fighter class/i }),
-    fighterPrototype.fighterClass.name
+    screen.getByText(fighterPrototype.fighterClass.name)
   );
   userEvent.type(
     screen.getByRole("spinbutton", { name: /movement/i }),
@@ -78,6 +80,15 @@ test("can add a fighter prototype", async () => {
     screen.getByRole("spinbutton", { name: /intelligence/i }),
     fighterPrototype.fighterStats.intelligence.toString()
   );
+
+  userEvent.click(
+    screen.getByRole("button", { name: /add fighter prototype/i })
+  );
+
+  await screen.findByLabelText(/loading/i);
+  await waitForLoadingToFinish();
+
+  expect(screen.getByText(fighterPrototype.name)).toBeInTheDocument();
 });
 test("can view fighterPrototypes", async () => {
   const [fpOne, fpTwo] = await fighterPrototypesDb.insert(

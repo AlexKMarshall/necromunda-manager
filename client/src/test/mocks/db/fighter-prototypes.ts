@@ -67,6 +67,7 @@ async function create({
 }
 
 async function readAll() {
+  load();
   return Object.values(fighterPrototypesStore);
 }
 
@@ -85,6 +86,7 @@ function validateFighterPrototype(id: FighterPrototype["id"]) {
 async function remove(id: FighterPrototype["id"]) {
   const fp = read(id);
   delete fighterPrototypesStore[id];
+  persist();
   return fp;
 }
 

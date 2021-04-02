@@ -75,6 +75,8 @@ const initialFighter = {
   recovery: false,
   lastingInjuries: "",
   capturedBy: "",
+  weapons: [],
+  skills: [],
 };
 
 async function addFighter({

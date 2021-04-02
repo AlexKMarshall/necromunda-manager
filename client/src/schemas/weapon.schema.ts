@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { traitSchema } from "./trait.schema";
 
 const weaponTypesEnum = z.enum([
   "basic weapon",
@@ -17,19 +18,19 @@ export const weaponSchema = z.object({
   id: z.string(),
   cost: z.number(),
   stats: z.object({
-    rng: z.object({
-      s: z.number().optional(),
-      l: z.number().optional(),
+    range: z.object({
+      short: z.number().optional(),
+      long: z.number().optional(),
     }),
-    acc: z.object({
-      s: z.number().optional(),
-      l: z.number().optional(),
+    accuracy: z.object({
+      short: z.number().optional(),
+      long: z.number().optional(),
     }),
-    str: z.number(),
-    ap: z.number().optional(),
-    d: z.number(),
-    am: z.number().optional(),
-    traits: z.array(z.string()),
+    strength: z.number(),
+    armourPenetration: z.number().optional(),
+    damage: z.number(),
+    ammo: z.number().optional(),
+    traits: z.array(traitSchema),
   }),
   weaponType: weaponTypesEnum,
 });

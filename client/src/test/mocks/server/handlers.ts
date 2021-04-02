@@ -6,11 +6,14 @@ import {
   CreateFighterDto,
   CreateFighterPrototypeDto,
   CreateGangDto,
+  CreateTraitDto,
 } from "../../../schemas";
 import * as factionsDb from "../db/factions";
 import * as fighterClassesDb from "../db/fighter-classes";
 import * as fighterPrototypesDb from "../db/fighter-prototypes";
 import * as gangsDb from "../db/gangs";
+import * as traitsDb from "../db/traits";
+import * as weaponsDb from "../db/weapons";
 
 const apiUrl = "http://localhost:8000";
 
@@ -94,10 +97,27 @@ export const handlers = [
     async (req, res, ctx) => {
       const { gangId } = req.params;
       const createFighterDto = req.body;
-      const fighter = await gangsDb.addFighter({ gangId, createFighterDto });
+      const fighter = await gangsDb.addFighter({
+        gangId,
+        createFighterDto,
+      });
       return res(ctx.status(201), ctx.json(fighter));
     }
   ),
+  rest.get(`${apiUrl}/traits`, async (req, res, ctx) => {
+    const traits = await traitsDb.readAll();
+    return res(ctx.json(traits));
+  }),
+  rest.post<CreateTraitDto>(`${apiUrl}/traits`, async (req, res, ctx) => {
+    const traitDto = req.body;
+    const trait = await traitsDb.create(traitDto);
+    return res(ctx.status(201), ctx.json(trait));
+  }),
+  rest.delete(`${apiUrl}/traits/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const trait = await traitsDb.remove(id);
+    return res(ctx.status(200), ctx.json(trait));
+  }),
 ].map((handler) => {
   const originalResolver = handler.resolver;
   // TODO is there a way to get rid of any?

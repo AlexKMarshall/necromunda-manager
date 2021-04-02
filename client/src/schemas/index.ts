@@ -4,3 +4,5 @@ export * from "./fighter-class.schema";
 export * from "./fighter-prototype.schema";
 export * from "./fighter-stats.schema";
 export * from "./fighter.schema";
+export * from "./weapon.schema";
+export * from "./trait.schema";

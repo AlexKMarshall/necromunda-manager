@@ -1,5 +1,4 @@
-import { FactionAdmin } from "./faction-admin";
-import { FighterClassAdmin } from "./fighter-class-admin";
-import { FighterPrototypeAdmin } from "./fighter-prototype-admin";
-
-export { FactionAdmin, FighterClassAdmin, FighterPrototypeAdmin };
+export * from "./faction-admin";
+export * from "./fighter-class-admin";
+export * from "./fighter-prototype-admin";
+export * from "./trait-admin";

@@ -7,6 +7,7 @@ import {
   fighterStatsSchema,
   loadingFighterStats,
 } from "./fighter-stats.schema";
+import { weaponSchema } from "./weapon.schema";
 
 export const fighterSchema = z.object({
   id: z.string(),
@@ -19,6 +20,8 @@ export const fighterSchema = z.object({
   capturedBy: z.string().optional(),
   lastingInjuries: z.string().optional(),
   fighterStats: fighterStatsSchema,
+  weapons: z.array(weaponSchema),
+  skills: z.array(z.string()),
 });
 
 export type Fighter = z.infer<typeof fighterSchema>;
@@ -32,6 +35,8 @@ export const loadingFighter: Fighter = {
   advancements: 0,
   recovery: false,
   fighterStats: loadingFighterStats,
+  weapons: [],
+  skills: [],
 };
 
 export const createFighterDtoSchema = fighterSchema

@@ -114,6 +114,8 @@ const initialFighter = {
   recovery: false,
   lastingInjuries: "",
   capturedBy: "",
+  weapons: [],
+  skills: [],
 };
 
 export function useAddFighter(gangId: Gang["id"]) {

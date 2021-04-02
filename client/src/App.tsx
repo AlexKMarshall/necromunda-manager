@@ -5,6 +5,7 @@ import {
   FactionAdmin,
   FighterClassAdmin,
   FighterPrototypeAdmin,
+  TraitAdmin,
 } from "./components/admin";
 import { GangList } from "./components/gang-list";
 import LoginButton from "./components/Login";
@@ -41,6 +42,7 @@ function AuthenticatedApp() {
               <FactionAdmin />
               <FighterClassAdmin />
               <FighterPrototypeAdmin />
+              <TraitAdmin />
             </div>
           </div>
         </Route>

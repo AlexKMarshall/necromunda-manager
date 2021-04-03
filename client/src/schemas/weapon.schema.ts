@@ -30,12 +30,18 @@ export const weaponSchema = z.object({
     armourPenetration: z.number().optional(),
     damage: z.number(),
     ammo: z.number().optional(),
-    traits: z.array(traitSchema),
   }),
+  traits: z.array(traitSchema.extend({ modifier: z.string().optional() })),
   weaponType: weaponTypesEnum,
 });
 
 export type Weapon = z.infer<typeof weaponSchema>;
 
-export const createWeaponDtoSchema = weaponSchema.omit({ id: true });
+export const createWeaponDtoSchema = weaponSchema
+  .omit({ id: true, traits: true })
+  .extend({
+    traits: z.array(
+      weaponSchema.shape.traits.element.pick({ id: true, modifier: true })
+    ),
+  });
 export type CreateWeaponDto = z.infer<typeof createWeaponDtoSchema>;

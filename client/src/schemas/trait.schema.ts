@@ -9,3 +9,8 @@ export type Trait = z.infer<typeof traitSchema>;
 
 export const createTraitDtoSchema = traitSchema.omit({ id: true });
 export type CreateTraitDto = z.infer<typeof createTraitDtoSchema>;
+
+export const loadingTrait: Trait = {
+  id: "loading",
+  name: "loading...",
+};

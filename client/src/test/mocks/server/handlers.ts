@@ -7,6 +7,7 @@ import {
   CreateFighterPrototypeDto,
   CreateGangDto,
   CreateTraitDto,
+  CreateWeaponDto,
 } from "../../../schemas";
 import * as factionsDb from "../db/factions";
 import * as fighterClassesDb from "../db/fighter-classes";
@@ -117,6 +118,20 @@ export const handlers = [
     const { id } = req.params;
     const trait = await traitsDb.remove(id);
     return res(ctx.status(200), ctx.json(trait));
+  }),
+  rest.get(`${apiUrl}/weapons`, async (req, res, ctx) => {
+    const weapons = await weaponsDb.readAll();
+    return res(ctx.json(weapons));
+  }),
+  rest.post<CreateWeaponDto>(`${apiUrl}/weapons`, async (req, res, ctx) => {
+    const weaponDto = req.body;
+    const weapon = await weaponsDb.create(weaponDto);
+    return res(ctx.status(201), ctx.json(weapon));
+  }),
+  rest.delete(`${apiUrl}/weapons/:id`, async (req, res, ctx) => {
+    const { id } = req.params;
+    const weapon = await weaponsDb.remove(id);
+    return res(ctx.status(200), ctx.json(weapon));
   }),
 ].map((handler) => {
   const originalResolver = handler.resolver;

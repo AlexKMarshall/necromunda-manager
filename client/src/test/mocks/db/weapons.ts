@@ -1,6 +1,7 @@
 import faker from "faker";
 import { HttpError } from "./utils";
 import { Weapon, CreateWeaponDto } from "../../../schemas";
+import * as traitsDb from "./traits";
 
 const weaponsKey = "__necromunda_weapons__";
 
@@ -31,19 +32,24 @@ async function insert(...weapons: Weapon[]) {
 }
 
 const initialWeapon = {
-  stats: {
-    traits: [],
-  },
+  stats: {},
+  traits: [],
 };
 
-async function create({ name, ...rest }: CreateWeaponDto) {
+async function create({ name, traits: traitsDto, ...rest }: CreateWeaponDto) {
   const weapons = await readAll();
   if (weapons.some((weapon) => weapon.name === name)) {
     throw new HttpError(`Weapon name "${name} already exists`, 400);
   }
 
+  const traits = await Promise.all(
+    traitsDto.map(({ id, modifier }) =>
+      traitsDb.read(id).then((t) => ({ ...t, modifier }))
+    )
+  );
+
   const id = faker.random.uuid();
-  weaponsStore[id] = { ...initialWeapon, id, name, ...rest };
+  weaponsStore[id] = { ...initialWeapon, id, name, traits, ...rest };
   persist();
   return read(id);
 }

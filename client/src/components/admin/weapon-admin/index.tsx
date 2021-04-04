@@ -49,10 +49,29 @@ export function WeaponAdmin(props: WeaponAdminProps) {
     defaultValues: {
       name: "",
       cost: 0,
+      stats: {
+        range: {
+          short: 0,
+          long: 0,
+        },
+        accuracy: {
+          short: 0,
+          long: 0,
+        },
+        strength: 0,
+        armourPenetration: 0,
+        damage: 0,
+        ammo: 0,
+        traits: [{ id: "", modifier: "" }],
+      },
     },
     resolver: zodResolver(createWeaponDtoSchema),
   });
-  const { fields, append } = useFieldArray({ control, name: "traits" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "stats.traits",
+    keyName: "itemId",
+  });
   const { postWeapon } = useCreateWeapon();
 
   async function onSubmit(data: CreateWeaponDto) {
@@ -74,8 +93,8 @@ export function WeaponAdmin(props: WeaponAdminProps) {
             armourPenetration,
             damage,
             ammo,
+            traits,
           },
-          traits,
           weaponType,
           loading,
         }) => ({
@@ -143,6 +162,21 @@ export function WeaponAdmin(props: WeaponAdminProps) {
       {
         Header: "Weapon Type",
         accessor: "weaponType" as const,
+      },
+      {
+        Header: "Traits",
+        accessor: "traits" as const,
+        Cell: ({
+          value,
+        }: {
+          value: CellValue<{ name: string; modifier: string }[]>;
+        }) =>
+          value
+            .map(
+              ({ name, modifier }) =>
+                `${name}${modifier?.length > 0 ? ` (${modifier})` : ""}`
+            )
+            .join(", "),
       },
       {
         Header: "Actions",
@@ -309,18 +343,18 @@ export function WeaponAdmin(props: WeaponAdminProps) {
               <h3>Traits:</h3>
               <ul>
                 {fields.map((item, index) => (
-                  <li key={item.id}>
+                  <li key={item.itemId}>
                     <div css={cluster}>
                       <div>
                         <div css={stackSmall}>
-                          <label htmlFor={`traits[${index}].id`}>
+                          <label htmlFor={`stats.traits[${index}].id`}>
                             Trait Name:
                           </label>
                           <select
-                            id={`traits[${index}].id`}
-                            name={`traits[${index}].id`}
+                            id={`stats.traits[${index}].id`}
+                            name={`stats.traits[${index}].id`}
                             ref={register()}
-                            defaultValue=""
+                            defaultValue={`${item.id}`}
                           >
                             {traits.map((t) => (
                               <option key={t.id} value={t.id}>
@@ -330,16 +364,19 @@ export function WeaponAdmin(props: WeaponAdminProps) {
                           </select>
                         </div>
                         <div css={stackSmall}>
-                          <label htmlFor={`traits[${index}].modifier`}>
+                          <label htmlFor={`stats.traits[${index}].modifier`}>
                             Modifier:
                           </label>
                           <input
-                            id={`traits[${index}].modifier`}
-                            name={`traits[${index}].modifier`}
+                            id={`stats.traits[${index}].modifier`}
+                            name={`stats.traits[${index}].modifier`}
                             ref={register()}
-                            defaultValue=""
+                            defaultValue={`${item.modifier}`}
                           />
                         </div>
+                        <button type="button" onClick={() => remove(index)}>
+                          remove
+                        </button>
                       </div>
                     </div>
                   </li>
@@ -347,7 +384,10 @@ export function WeaponAdmin(props: WeaponAdminProps) {
               </ul>
               <div css={cluster}>
                 <div>
-                  <button type="button" onClick={() => append({ id: "" })}>
+                  <button
+                    type="button"
+                    onClick={() => append({ id: "", modifier: "" })}
+                  >
                     Add trait
                   </button>
                 </div>

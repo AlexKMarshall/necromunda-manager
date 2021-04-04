@@ -32,11 +32,16 @@ async function insert(...weapons: Weapon[]) {
 }
 
 const initialWeapon = {
-  stats: {},
-  traits: [],
+  stats: {
+    traits: [],
+  },
 };
 
-async function create({ name, traits: traitsDto, ...rest }: CreateWeaponDto) {
+async function create({
+  name,
+  stats: { traits: traitsDto, ...stats },
+  ...rest
+}: CreateWeaponDto) {
   const weapons = await readAll();
   if (weapons.some((weapon) => weapon.name === name)) {
     throw new HttpError(`Weapon name "${name} already exists`, 400);
@@ -49,7 +54,13 @@ async function create({ name, traits: traitsDto, ...rest }: CreateWeaponDto) {
   );
 
   const id = faker.random.uuid();
-  weaponsStore[id] = { ...initialWeapon, id, name, traits, ...rest };
+  weaponsStore[id] = {
+    ...initialWeapon,
+    id,
+    name,
+    stats: { ...stats, traits },
+    ...rest,
+  };
   persist();
   return read(id);
 }

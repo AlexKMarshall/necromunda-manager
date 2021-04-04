@@ -49,7 +49,7 @@ export function useCreateWeapon() {
       const previousWeapons =
         queryClient.getQueryData<Weapon[]>(QUERY_KEYS.weapons) ?? [];
 
-      const weaponTraits = weapon.traits.map(({ id, modifier }) => {
+      const weaponTraits = weapon.stats.traits.map(({ id, modifier }) => {
         const trait = traits.find((t) => t.id === id) ?? loadingTrait;
         return { ...trait, modifier };
       });
@@ -58,7 +58,10 @@ export function useCreateWeapon() {
         const oldWeapons = old ?? [];
         const newWeapon = {
           ...weapon,
-          traits: weaponTraits,
+          stats: {
+            ...weapon.stats,
+            traits: weaponTraits,
+          },
           id: createTempId(),
           loading: true,
         };

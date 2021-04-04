@@ -11,6 +11,7 @@ import {
 import { GangList } from "./components/gang-list";
 import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
+import { FieldArray } from "./components/field-array";
 import { cluster } from "./styles";
 import { Gang } from "./pages";
 
@@ -34,6 +35,9 @@ function AuthenticatedApp() {
           <li>
             <Link to="/gangs">Gangs</Link>
           </li>
+          <li>
+            <Link to="/array">Field Array</Link>
+          </li>
         </ul>
       </nav>
       <Switch>
@@ -53,6 +57,9 @@ function AuthenticatedApp() {
         </Route>
         <Route path="/gangs/:id" exact>
           <Gang />
+        </Route>
+        <Route path="/array" exact>
+          <FieldArray />
         </Route>
       </Switch>
     </>

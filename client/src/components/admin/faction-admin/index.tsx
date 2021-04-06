@@ -23,50 +23,15 @@ interface FactionAdminProps {}
 export function FactionAdmin(props: FactionAdminProps) {
   const { isLoading, isError, error, factions } = useReadFactions();
 
-  const columns = useMemo(
-    () => [
-      { Header: "Name", accessor: "name" as const },
-      {
-        Header: "Actions",
-        accessor: "id" as const,
-        Cell: ({
-          row: { original },
-          value,
-        }: {
-          row: Row<ArrayElement<typeof factions>>;
-          value: CellValue;
-        }) => (
-          <div>
-            {original.loading ? (
-              <span aria-label="loading">Spinner</span>
-            ) : (
-              <DeleteFactionButton id={value} name={original.name} />
-            )}
-          </div>
-        ),
-      },
-    ],
-    []
-  );
-
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data: factions });
+  } = useFactionTable(factions);
 
-  const { register, handleSubmit, errors, reset } = useForm<AddFactionForm>({
-    defaultValues: { name: "" },
-    resolver: zodResolver(addFactionFormSchema),
-  });
-  const { postFaction } = useCreateFaction();
-
-  async function onSubmit(data: AddFactionForm) {
-    await postFaction(data);
-    reset();
-  }
+  const { register, errors, createFaction } = useAddFactionForm();
   return (
     <div css={stack}>
       <h2>Factions</h2>
@@ -101,7 +66,7 @@ export function FactionAdmin(props: FactionAdminProps) {
           </tbody>
         </table>
       )}
-      <form onSubmit={handleSubmit(onSubmit)} css={stack}>
+      <form onSubmit={createFaction} css={stack}>
         <StandardFormControl
           label="Faction Name:"
           name="name"
@@ -131,4 +96,51 @@ function DeleteFactionButton({ id, name }: DeleteFactionButtonProps) {
       Delete
     </button>
   );
+}
+
+function useFactionTable(
+  factions: ReturnType<typeof useReadFactions>["factions"]
+) {
+  const columns = useMemo(
+    () => [
+      { Header: "Name", accessor: "name" as const },
+      {
+        Header: "Actions",
+        accessor: "id" as const,
+        Cell: ({
+          row: { original },
+          value,
+        }: {
+          row: Row<ArrayElement<typeof factions>>;
+          value: CellValue;
+        }) => (
+          <div>
+            {original.loading ? (
+              <span aria-label="loading">Spinner</span>
+            ) : (
+              <DeleteFactionButton id={value} name={original.name} />
+            )}
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  return useTable({ columns, data: factions });
+}
+
+function useAddFactionForm() {
+  const useFormReturn = useForm<AddFactionForm>({
+    defaultValues: { name: "" },
+    resolver: zodResolver(addFactionFormSchema),
+  });
+  const { postFaction } = useCreateFaction();
+
+  const createFaction = useFormReturn.handleSubmit(async (faction) => {
+    await postFaction(faction);
+    useFormReturn.reset();
+  });
+
+  return { ...useFormReturn, createFaction };
 }

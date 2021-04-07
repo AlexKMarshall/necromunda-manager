@@ -14,6 +14,7 @@ import LogoutButton from "./components/Logout";
 import { FieldArray } from "./components/field-array";
 import { cluster } from "./styles";
 import { Gang } from "./pages";
+import { EditableTable } from "./components/editable-table";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -38,6 +39,9 @@ function AuthenticatedApp() {
           <li>
             <Link to="/array">Field Array</Link>
           </li>
+          <li>
+            <Link to="/table">Editable Table</Link>
+          </li>
         </ul>
       </nav>
       <Switch>
@@ -60,6 +64,9 @@ function AuthenticatedApp() {
         </Route>
         <Route path="/array" exact>
           <FieldArray />
+        </Route>
+        <Route path="/table" exact>
+          <EditableTable />
         </Route>
       </Switch>
     </>

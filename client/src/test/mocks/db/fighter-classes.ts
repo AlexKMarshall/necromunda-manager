@@ -1,6 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { FighterClass, CreateFighterClassDto } from "../../schemas";
+import { FighterClass, CreateFighterClassDto } from "../../../schemas";
 
 const fighterClassesKey = "__necromunda_fighter_classes__";
 
@@ -24,6 +24,14 @@ try {
   load();
 } catch (e) {
   persist();
+}
+
+async function insert(...fighterClasses: FighterClass[]) {
+  fighterClasses.forEach((fc) => {
+    fighterClassesStore[fc.id] = fc;
+  });
+  persist();
+  return fighterClasses;
 }
 
 async function create({ name }: CreateFighterClassDto) {
@@ -54,4 +62,16 @@ function validateFighterClass(id: FighterClass["id"]) {
   }
 }
 
-export { create, readAll, read };
+async function remove(id: FighterClass["id"]) {
+  const fighterClass = read(id);
+  delete fighterClassesStore[id];
+  persist();
+  return { deleted: fighterClass, store: fighterClassesStore };
+}
+
+async function reset() {
+  fighterClassesStore = {};
+  persist();
+}
+
+export { insert, create, readAll, read, remove, reset };

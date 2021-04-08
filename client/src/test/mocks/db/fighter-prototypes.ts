@@ -1,6 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { FighterPrototype, CreateFighterPrototypeDto } from "../../schemas";
+import { FighterPrototype, CreateFighterPrototypeDto } from "../../../schemas";
 import * as factionsDb from "./factions";
 import * as fighterClassesDb from "./fighter-classes";
 
@@ -26,6 +26,14 @@ try {
   load();
 } catch (e) {
   persist();
+}
+
+async function insert(...fighterPrototypes: FighterPrototype[]) {
+  fighterPrototypes.forEach((fp) => {
+    fighterPrototypesStore[fp.id] = fp;
+  });
+  persist();
+  return fighterPrototypes;
 }
 
 async function create({
@@ -59,6 +67,7 @@ async function create({
 }
 
 async function readAll() {
+  load();
   return Object.values(fighterPrototypesStore);
 }
 
@@ -74,4 +83,16 @@ function validateFighterPrototype(id: FighterPrototype["id"]) {
   }
 }
 
-export { create, readAll, read };
+async function remove(id: FighterPrototype["id"]) {
+  const fp = read(id);
+  delete fighterPrototypesStore[id];
+  persist();
+  return fp;
+}
+
+async function reset() {
+  fighterPrototypesStore = {};
+  persist();
+}
+
+export { insert, create, readAll, read, remove, reset };

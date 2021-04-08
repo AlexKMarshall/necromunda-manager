@@ -7,8 +7,9 @@ import {
 } from "../schemas/fighter-prototype.schema";
 import { useAuthClient } from "./client";
 import { createTempId, sortByField } from "../utils";
-import { defaultFaction, useReadFactions } from "./factions";
+import { useReadFactions } from "./factions";
 import { defaultFighterClass, useReadFighterClasses } from "./fighter-classes";
+import { loadingFaction } from "../schemas";
 
 export function useReadFighterPrototypes() {
   const client = useAuthClient();
@@ -19,7 +20,8 @@ export function useReadFighterPrototypes() {
       return fighterPrototypeSchema
         .array()
         .parse(data)
-        .sort(sortByField("name"));
+        .sort(sortByField("name"))
+        .map((fp) => ({ ...fp, loading: false }));
     } catch (error) {
       return Promise.reject(error);
     }
@@ -57,7 +59,7 @@ export function useCreateFighterPrototype() {
         ) ?? [];
 
       const faction =
-        factions.find((faction) => faction.id === factionId) ?? defaultFaction;
+        factions.find((faction) => faction.id === factionId) ?? loadingFaction;
       const fighterClass =
         fighterClasses.find((fc) => fc.id === fighterClassId) ??
         defaultFighterClass;
@@ -73,6 +75,7 @@ export function useCreateFighterPrototype() {
             fighterClass,
             fighterStats,
             id: createTempId(),
+            loading: true,
           };
           return [...oldFighterPrototypes, newFighterPrototype].sort(
             sortByField("name")
@@ -97,17 +100,17 @@ export function useCreateFighterPrototype() {
   return { ...mutationResult, postFighterPrototype };
 }
 
-export function useDeleteFighterPrototype() {
+export function useDeleteFighterPrototype(id: FighterPrototype["id"]) {
   const client = useAuthClient();
   const queryClient = useQueryClient();
 
-  const query = (fighterPrototypeId: string) =>
-    client(`fighter-prototypes/${fighterPrototypeId}`, null, {
+  const query = () =>
+    client(`fighter-prototypes/${id}`, null, {
       method: "DELETE",
     });
 
   const mutationResult = useMutation(query, {
-    onMutate: async (fighterPrototypeId) => {
+    onMutate: async () => {
       await queryClient.cancelQueries(QUERY_KEYS.fighterPrototypes);
 
       const previousFighterPrototypes =
@@ -117,7 +120,7 @@ export function useDeleteFighterPrototype() {
 
       queryClient.setQueryData<FighterPrototype[]>(
         QUERY_KEYS.fighterPrototypes,
-        (old) => (old ? old.filter((fc) => fc.id !== fighterPrototypeId) : [])
+        (old) => (old ? old.filter((fp) => fp.id !== id) : [])
       );
 
       return { previousFighterPrototypes };

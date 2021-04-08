@@ -20,7 +20,11 @@ export function useReadFighterClasses() {
   const query = async () => {
     try {
       const data = await client("fighter-classes");
-      return fighterClassSchema.array().parse(data).sort(sortByField("name"));
+      return fighterClassSchema
+        .array()
+        .parse(data)
+        .sort(sortByField("name"))
+        .map((fc) => ({ ...fc, loading: false }));
     } catch (error) {
       return Promise.reject(error);
     }
@@ -54,6 +58,7 @@ export function useCreateFighterClass() {
           const newFighterClass = {
             ...fighterClass,
             id: createTempId(),
+            loading: true,
           };
           return [...oldFighterClasses, newFighterClass].sort(
             sortByField("name")
@@ -76,15 +81,15 @@ export function useCreateFighterClass() {
 
   return { ...mutationResult, postFighterClass };
 }
-export function useDeleteFighterClass() {
+export function useDeleteFighterClass(id: FighterClass["id"]) {
   const client = useAuthClient();
   const queryClient = useQueryClient();
 
-  const query = (fighterClassId: string) =>
-    client(`fighter-classes/${fighterClassId}`, null, { method: "DELETE" });
+  const query = () =>
+    client(`fighter-classes/${id}`, null, { method: "DELETE" });
 
   const mutationResult = useMutation(query, {
-    onMutate: async (fighterClassId) => {
+    onMutate: async () => {
       await queryClient.cancelQueries(QUERY_KEYS.fighterClasses);
 
       const previousFighterClasses =
@@ -93,7 +98,7 @@ export function useDeleteFighterClass() {
 
       queryClient.setQueryData<FighterClass[]>(
         QUERY_KEYS.fighterClasses,
-        (old) => (old ? old.filter((fc) => fc.id !== fighterClassId) : [])
+        (old) => (old ? old.filter((fc) => fc.id !== id) : [])
       );
 
       return { previousFighterClasses };

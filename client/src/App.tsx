@@ -5,11 +5,15 @@ import {
   FactionAdmin,
   FighterClassAdmin,
   FighterPrototypeAdmin,
+  WeaponAdmin,
+  TraitAdmin,
 } from "./components/admin";
 import { GangList } from "./components/gang-list";
 import LoginButton from "./components/Login";
 import LogoutButton from "./components/Logout";
+import { FieldArray } from "./components/field-array";
 import { cluster } from "./styles";
+import { Gang } from "./pages";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -31,6 +35,9 @@ function AuthenticatedApp() {
           <li>
             <Link to="/gangs">Gangs</Link>
           </li>
+          <li>
+            <Link to="/array">Field Array</Link>
+          </li>
         </ul>
       </nav>
       <Switch>
@@ -40,11 +47,19 @@ function AuthenticatedApp() {
               <FactionAdmin />
               <FighterClassAdmin />
               <FighterPrototypeAdmin />
+              <TraitAdmin />
+              <WeaponAdmin />
             </div>
           </div>
         </Route>
         <Route path="/gangs" exact>
           <GangList />
+        </Route>
+        <Route path="/gangs/:id" exact>
+          <Gang />
+        </Route>
+        <Route path="/array" exact>
+          <FieldArray />
         </Route>
       </Switch>
     </>

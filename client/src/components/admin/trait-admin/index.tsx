@@ -1,27 +1,22 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
-import { useTable, Row, CellValue } from "react-table";
+import { CellValue, Row, useTable } from "react-table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
-  useReadFighterClasses,
-  useCreateFighterClass,
-  useDeleteFighterClass,
-} from "../../../hooks/fighter-classes";
+  useReadTraits,
+  useCreateTrait,
+  useDeleteTrait,
+} from "../../../hooks/traits";
 import { box, stack, cluster } from "../../../styles";
 import { StandardFormControl } from "../../form";
 import { ArrayElement } from "../../../utils/types";
-import { FighterClass } from "../../../schemas";
+import { Trait, CreateTraitDto, createTraitDtoSchema } from "../../../schemas";
 
-const addFighterClassFormSchema = z.object({
-  name: z.string().nonempty({ message: "Required" }),
-});
-type AddFighterClassForm = z.infer<typeof addFighterClassFormSchema>;
+interface TraitAdminProps {}
+export function TraitAdmin(props: TraitAdminProps) {
+  const { isLoading, isError, error, traits } = useReadTraits();
 
-interface FighterClassAdminProps {}
-export function FighterClassAdmin(props: FighterClassAdminProps) {
-  const { isLoading, isError, error, fighterClasses } = useReadFighterClasses();
   const columns = useMemo(
     () => [
       { Header: "Name", accessor: "name" as const },
@@ -32,16 +27,16 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
           row: { original },
           value,
         }: {
-          row: Row<ArrayElement<typeof fighterClasses>>;
+          row: Row<ArrayElement<typeof traits>>;
           value: CellValue;
         }) => (
           <div>
             {original.loading ? (
               <span aria-label="loading">Spinner</span>
             ) : (
-              <DeleteFighterClassButton
-                id={original.id}
-                label={`Delete Fighter Class ${original.name}`}
+              <DeleteTraitButton
+                id={value}
+                label={`Delete Trait ${original.name}`}
               />
             )}
           </div>
@@ -50,18 +45,6 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
     ],
     []
   );
-  const { register, handleSubmit, errors, reset } = useForm<
-    AddFighterClassForm
-  >({
-    defaultValues: { name: "" },
-    resolver: zodResolver(addFighterClassFormSchema),
-  });
-  const { postFighterClass } = useCreateFighterClass();
-
-  async function onSubmit(data: AddFighterClassForm) {
-    await postFighterClass(data);
-    reset();
-  }
 
   const {
     getTableProps,
@@ -69,10 +52,21 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data: fighterClasses });
+  } = useTable({ columns, data: traits });
+
+  const { register, handleSubmit, errors, reset } = useForm<CreateTraitDto>({
+    defaultValues: { name: "" },
+    resolver: zodResolver(createTraitDtoSchema),
+  });
+  const { postTrait } = useCreateTrait();
+
+  async function onSubmit(data: CreateTraitDto) {
+    await postTrait(data);
+    reset();
+  }
   return (
     <div css={stack}>
-      <h2>Fighter Classes</h2>
+      <h2>Traits</h2>
       {isLoading ? (
         <div>Loading...</div>
       ) : isError ? (
@@ -106,7 +100,7 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
       )}
       <form onSubmit={handleSubmit(onSubmit)} css={stack}>
         <StandardFormControl
-          label="Fighter Class Name:"
+          label="Trait Name:"
           name="name"
           renderControlElement={(props) => (
             <input type="text" ref={register} {...props} />
@@ -115,7 +109,7 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
         />
         <div css={cluster}>
           <div>
-            <button type="submit">Add Fighter Class</button>
+            <button type="submit">Add Trait</button>
           </div>
         </div>
       </form>
@@ -123,17 +117,14 @@ export function FighterClassAdmin(props: FighterClassAdminProps) {
   );
 }
 
-interface DeleteFighterClassButtonProps {
-  id: FighterClass["id"];
+interface DeleteTraitButtonProps {
+  id: Trait["id"];
   label: string;
 }
-function DeleteFighterClassButton({
-  id,
-  label,
-}: DeleteFighterClassButtonProps) {
-  const { deleteFighterClass } = useDeleteFighterClass(id);
+function DeleteTraitButton({ id, label }: DeleteTraitButtonProps) {
+  const { deleteTrait } = useDeleteTrait(id);
   return (
-    <button onClick={() => deleteFighterClass()} aria-label={label}>
+    <button onClick={deleteTrait} aria-label={label}>
       Delete
     </button>
   );

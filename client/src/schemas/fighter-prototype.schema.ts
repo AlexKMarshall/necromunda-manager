@@ -1,7 +1,13 @@
 import * as z from "zod";
-import { factionSchema } from "./faction.schema";
-import { fighterClassSchema } from "./fighter-class.schema";
-import { fighterStatsSchema } from "./fighter-stats.schema";
+import { factionSchema, loadingFaction } from "./faction.schema";
+import {
+  fighterClassSchema,
+  loadingFighterClass,
+} from "./fighter-class.schema";
+import {
+  fighterStatsSchema,
+  loadingFighterStats,
+} from "./fighter-stats.schema";
 
 export const fighterPrototypeSchema = z.object({
   name: z.string(),
@@ -23,3 +29,12 @@ export const createFighterPrototypeDtoSchema = fighterPrototypeSchema
 export type CreateFighterPrototypeDto = z.infer<
   typeof createFighterPrototypeDtoSchema
 >;
+
+export const loadingFighterPrototype: FighterPrototype = {
+  id: "loading",
+  name: "Loading...",
+  cost: 0,
+  faction: loadingFaction,
+  fighterClass: loadingFighterClass,
+  fighterStats: loadingFighterStats,
+};

@@ -18,3 +18,14 @@ export function ensure<T>(
 
   return argument;
 }
+
+export function deepClone<T>(source: T): T {
+  return JSON.parse(JSON.stringify(source));
+}
+
+export function formatTitleCase(str: String) {
+  return str
+    .split(" ")
+    .map((word) => `${word.slice(0, 1).toUpperCase()}${word.slice(1) ?? ""}`)
+    .join(" ");
+}

@@ -1,6 +1,6 @@
 import faker from "faker";
 import { HttpError } from "./utils";
-import { Faction, CreateFactionDto } from "../../schemas";
+import { Faction, CreateFactionDto } from "../../../schemas";
 
 const factionsKey = "__necromunda_factions__";
 
@@ -22,6 +22,13 @@ try {
 } catch (e) {
   persist();
 }
+async function insert(...factions: Faction[]) {
+  factions.forEach((faction) => {
+    factionsStore[faction.id] = faction;
+  });
+  persist();
+  return factions;
+}
 
 async function create({ name }: CreateFactionDto) {
   const factions = await readAll();
@@ -36,6 +43,7 @@ async function create({ name }: CreateFactionDto) {
 }
 
 async function readAll() {
+  load();
   return Object.values(factionsStore);
 }
 
@@ -51,4 +59,16 @@ function validateFaction(id: Faction["id"]) {
   }
 }
 
-export { create, readAll, read };
+async function remove(id: Faction["id"]) {
+  const faction = read(id);
+  delete factionsStore[id];
+  persist();
+  return faction;
+}
+
+async function reset() {
+  factionsStore = {};
+  persist();
+}
+
+export { insert, create, readAll, read, remove, reset };

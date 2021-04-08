@@ -1,12 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
-import { useTable } from "react-table";
+import { CellValue, Row, useTable } from "react-table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useReadFactions, useCreateFaction } from "../../../hooks/factions";
-import { box, stack, stackSmall, cluster } from "../../../styles";
+import {
+  useReadFactions,
+  useCreateFaction,
+  useDeleteFaction,
+} from "../../../hooks/factions";
+import { box, stack, cluster } from "../../../styles";
 import { StandardFormControl } from "../../form";
+import { ArrayElement } from "../../../utils/types";
+import { Faction } from "../../../schemas";
 
 const addFactionFormSchema = z.object({
   name: z.string().nonempty({ message: "Required" }),
@@ -15,21 +21,7 @@ type AddFactionForm = z.infer<typeof addFactionFormSchema>;
 
 interface FactionAdminProps {}
 export function FactionAdmin(props: FactionAdminProps) {
-  const columns = useMemo(
-    () => [{ Header: "Name", accessor: "name" as const }],
-    []
-  );
   const { isLoading, isError, error, factions } = useReadFactions();
-  const { register, handleSubmit, errors, reset } = useForm<AddFactionForm>({
-    defaultValues: { name: "" },
-    resolver: zodResolver(addFactionFormSchema),
-  });
-  const { postFaction } = useCreateFaction();
-
-  async function onSubmit(data: AddFactionForm) {
-    await postFaction(data);
-    reset();
-  }
 
   const {
     getTableProps,
@@ -37,7 +29,9 @@ export function FactionAdmin(props: FactionAdminProps) {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data: factions });
+  } = useFactionTable(factions);
+
+  const { register, errors, createFaction } = useAddFactionForm();
   return (
     <div css={stack}>
       <h2>Factions</h2>
@@ -72,9 +66,9 @@ export function FactionAdmin(props: FactionAdminProps) {
           </tbody>
         </table>
       )}
-      <form onSubmit={handleSubmit(onSubmit)} css={stack}>
+      <form onSubmit={createFaction} css={stack}>
         <StandardFormControl
-          label="Name:"
+          label="Faction Name:"
           name="name"
           renderControlElement={(props) => (
             <input type="text" ref={register} {...props} />
@@ -89,4 +83,64 @@ export function FactionAdmin(props: FactionAdminProps) {
       </form>
     </div>
   );
+}
+
+interface DeleteFactionButtonProps {
+  id: Faction["id"];
+  name: Faction["name"];
+}
+function DeleteFactionButton({ id, name }: DeleteFactionButtonProps) {
+  const { deleteFaction } = useDeleteFaction(id);
+  return (
+    <button onClick={deleteFaction} aria-label={`delete faction ${name}`}>
+      Delete
+    </button>
+  );
+}
+
+function useFactionTable(
+  factions: ReturnType<typeof useReadFactions>["factions"]
+) {
+  const columns = useMemo(
+    () => [
+      { Header: "Name", accessor: "name" as const },
+      {
+        Header: "Actions",
+        accessor: "id" as const,
+        Cell: ({
+          row: { original },
+          value,
+        }: {
+          row: Row<ArrayElement<typeof factions>>;
+          value: CellValue;
+        }) => (
+          <div>
+            {original.loading ? (
+              <span aria-label="loading">Spinner</span>
+            ) : (
+              <DeleteFactionButton id={value} name={original.name} />
+            )}
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  return useTable({ columns, data: factions });
+}
+
+function useAddFactionForm() {
+  const useFormReturn = useForm<AddFactionForm>({
+    defaultValues: { name: "" },
+    resolver: zodResolver(addFactionFormSchema),
+  });
+  const { postFaction } = useCreateFaction();
+
+  const createFaction = useFormReturn.handleSubmit(async (faction) => {
+    await postFaction(faction);
+    useFormReturn.reset();
+  });
+
+  return { ...useFormReturn, createFaction };
 }

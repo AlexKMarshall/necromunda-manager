@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useMemo } from "react";
 import { CellValue, Row, useTable } from "react-table";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -36,12 +36,6 @@ const addFighterPrototypeFormSchema = z.object({
 });
 type AddFighterClassForm = z.infer<typeof addFighterPrototypeFormSchema>;
 
-type RenderControlProps = Parameters<
-  React.ComponentPropsWithoutRef<
-    typeof StandardFormControl
-  >["renderControlElement"]
->[0];
-
 interface FighterPrototypeAdminProps {}
 export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
   const {
@@ -67,7 +61,7 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
   );
   const isError = [isErrorFPs, isErrorFactions, isErrorFCs].some((e) => e);
   const error = [errorFPs, errorFactions, errorFCs].filter((e) => Boolean(e));
-  const { register, handleSubmit, errors, reset, control } = useForm<
+  const { register, handleSubmit, errors, reset } = useForm<
     AddFighterClassForm
   >({
     defaultValues: {
@@ -222,23 +216,6 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
     data,
   });
 
-  function renderNumberControl({ name, ...props }: RenderControlProps) {
-    return (
-      <Controller
-        name={name}
-        control={control}
-        render={({ value, onChange }) => (
-          <input
-            type="number"
-            value={value}
-            onChange={(e) => onChange(parseInt(e.target.value, 10))}
-            {...props}
-          />
-        )}
-      />
-    );
-  }
-
   return (
     <div css={stack}>
       <h2>Fighter Prototypes</h2>
@@ -285,7 +262,13 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
             <StandardFormControl
               name="cost"
               label="Cost:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.cost}
             />
             <StandardFormControl
@@ -319,73 +302,145 @@ export function FighterPrototypeAdmin(props: FighterPrototypeAdminProps) {
             <StandardFormControl
               name="fighterStats.movement"
               label="Movement:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.movement}
             />
             <StandardFormControl
               name="fighterStats.weaponSkill"
               label="Weapon Skill:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.weaponSkill}
             />
             <StandardFormControl
               name="fighterStats.ballisticSkill"
               label="Ballistic Skill:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.ballisticSkill}
             />
             <StandardFormControl
               name="fighterStats.strength"
               label="Strength:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.strength}
             />
             <StandardFormControl
               name="fighterStats.toughness"
               label="Toughness:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.toughness}
             />
             <StandardFormControl
               name="fighterStats.wounds"
               label="Wounds:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.wounds}
             />
             <StandardFormControl
               name="fighterStats.initiative"
               label="Initiative:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.initiative}
             />
             <StandardFormControl
               name="fighterStats.attacks"
               label="Attacks:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.attacks}
             />
             <StandardFormControl
               name="fighterStats.leadership"
               label="Leadership:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.leadership}
             />
             <StandardFormControl
               name="fighterStats.cool"
               label="Cool:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.cool}
             />
             <StandardFormControl
               name="fighterStats.will"
               label="Will:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.will}
             />
             <StandardFormControl
               name="fighterStats.intelligence"
               label="Intelligence:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.fighterStats?.intelligence}
             />
             <div css={cluster}>

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useMemo } from "react";
 import { CellValue, Row, useTable } from "react-table";
-import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CreateWeaponDto,
@@ -19,12 +19,6 @@ import { box, stack, cluster, stackSmall } from "../../../styles";
 import { StandardFormControl } from "../../form";
 import { ArrayElement } from "../../../utils/types";
 import { formatTitleCase } from "../../../utils";
-
-type RenderControlProps = Parameters<
-  React.ComponentPropsWithoutRef<
-    typeof StandardFormControl
-  >["renderControlElement"]
->[0];
 
 interface WeaponAdminProps {}
 export function WeaponAdmin(props: WeaponAdminProps) {
@@ -211,23 +205,6 @@ export function WeaponAdmin(props: WeaponAdminProps) {
     data,
   });
 
-  function renderNumberControl({ name, ...props }: RenderControlProps) {
-    return (
-      <Controller
-        name={name}
-        control={control}
-        render={({ value, onChange }) => (
-          <input
-            type="number"
-            value={value}
-            onChange={(e) => onChange(parseInt(e.target.value, 10))}
-            {...props}
-          />
-        )}
-      />
-    );
-  }
-
   return (
     <div css={stack}>
       <h2>Weapons</h2>
@@ -274,55 +251,109 @@ export function WeaponAdmin(props: WeaponAdminProps) {
             <StandardFormControl
               name="cost"
               label="Cost:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.cost}
             />
             <StandardFormControl
               name="stats.range.short"
               label="Short Range:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.range?.short}
             />
             <StandardFormControl
               name="stats.range.long"
               label="Long Range:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.range?.long}
             />
             <StandardFormControl
               name="stats.accuracy.long"
               label="Short Accuracy:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.accuracy?.short}
             />
             <StandardFormControl
               name="stats.accuracy.long"
               label="Long Accuracy:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.accuracy?.long}
             />
             <StandardFormControl
               name="stats.strength"
               label="Strength:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.strength}
             />
             <StandardFormControl
               name="stats.armourPenetration"
               label="Armour Penetration:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.armourPenetration}
             />
             <StandardFormControl
               name="stats.damage"
               label="Damage:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.damage}
             />
             <StandardFormControl
               name="stats.ammo"
               label="Ammo:"
-              renderControlElement={renderNumberControl}
+              renderControlElement={(props) => (
+                <input
+                  {...props}
+                  type="number"
+                  ref={register({ valueAsNumber: true })}
+                />
+              )}
               error={errors.stats?.ammo}
             />
             <StandardFormControl
